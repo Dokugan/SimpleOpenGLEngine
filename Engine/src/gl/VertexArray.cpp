@@ -30,7 +30,7 @@ namespace engine
 				const auto& element = elements[i];
 				GlCall(glEnableVertexAttribArray(i));
 				GlCall(glVertexAttribPointer(i, element.count, element.type,
-					element.normalized, 0, reinterpret_cast<void*>(offset)));
+					element.normalized, layout.GetStride(), reinterpret_cast<void*>(offset)));
 				offset += element.count * VertexBufferElement::GetSizeOfType(element.type);
 			}
 		}

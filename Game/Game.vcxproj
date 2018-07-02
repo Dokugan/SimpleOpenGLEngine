@@ -143,6 +143,11 @@
       <Project>{6a5e3b8e-4801-4af5-b57e-5b54d158f457}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="res\shaders\BackgroundShader.shader" />
+    <None Include="res\shaders\Basic.shader" />
+    <None Include="res\shaders\TextureShader.shader" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

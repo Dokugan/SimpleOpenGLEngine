@@ -31,6 +31,8 @@ namespace engine {
 		}
 		glfwMakeContextCurrent(m_window);
 		glewInit();
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
 		m_init = true;
 		GameLoop();
 	}
@@ -54,7 +56,7 @@ namespace engine {
 	{
 		while (!glfwWindowShouldClose(m_window))
 		{	
-			glClear(GL_COLOR_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glfwPollEvents();
 			Update();
 			if (m_game->GetActiveScene())

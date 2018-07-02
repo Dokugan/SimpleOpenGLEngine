@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 	Camera camera = Camera::PerspectiveCamera(Transform(glm::vec3(-5.0f, 5.0f, 5.0f)), 45.0f, static_cast<float>(width), static_cast<float>(height), 200.0f, 0.1f);
 	mainScene->SetCamera(camera);
 	GameObject* obj = new GameObject();
-	obj->AddComponent(new MeshComponent("res/models/cube.obj"));
+	obj->AddComponent(new MeshComponent("res/models/texturedcube.obj"));
 	mainScene->AddGameObject(obj);
 	std::cin.get();
 }
