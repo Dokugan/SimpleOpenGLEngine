@@ -114,10 +114,17 @@ namespace engine
 			float u;
 			float v;
 		};
+		struct normal
+		{
+			float x;
+			float y;
+			float z;
+		};
 		struct vertex
 		{
 			position p;
 			uv uv;
+			normal normal;
 		};
 
 		struct indice
@@ -125,7 +132,7 @@ namespace engine
 			unsigned int index;
 			unsigned int v;
 			unsigned int vt;
-			//unsigned int vn;
+			unsigned int vn;
 		};
 
 		std::vector<vertex> vertices;
@@ -136,11 +143,12 @@ namespace engine
 		{
 			unsigned int v = i.vertex_index;
 			unsigned int vt = i.texcoord_index;
+			unsigned int vn = i.normal_index;
 
 			bool shouldBreakOuter = false;
 			for (auto c : madeCombination)
 			{
-				if (c.v == v && c.vt == vt)
+				if (c.v == v && c.vt == vt && c.vn == vn)
 				{
 					indices.push_back(c.index);
 					//idx++;
@@ -161,26 +169,34 @@ namespace engine
 				{
 					attrib.texcoords[vt * 2 + 0],
 					attrib.texcoords[vt * 2 + 1]
+				},
+				{
+					attrib.normals[vn * 3 + 0],
+					attrib.normals[vn * 3 + 1],
+					attrib.normals[vn * 3 + 2]
 				}
 			});
 
-			madeCombination.push_back({ static_cast<unsigned int>(madeCombination.size()) ,v, vt });
+			madeCombination.push_back({ static_cast<unsigned int>(madeCombination.size()) ,v, vt, vn});
 			indices.push_back(madeCombination[madeCombination.size() - 1].index);
 			//m_indices[idx] = madeCombination[madeCombination.size() - 1].index;
 			//idx++;
 		}
 
 		m_vertexCount = vertices.size();
-		m_vertices = static_cast<float*>(malloc(m_vertexCount * sizeof(float) * 5));
+		m_vertices = static_cast<float*>(malloc(m_vertexCount * sizeof(float) * 8));
 
 		int i = 0;
 		for (auto v : vertices)
 		{
-			m_vertices[i * 5 + 0] = v.p.x;
-			m_vertices[i * 5 + 1] = v.p.y;
-			m_vertices[i * 5 + 2] = v.p.z;
-			m_vertices[i * 5 + 3] = v.uv.u;
-			m_vertices[i * 5 + 4] = v.uv.v;
+			m_vertices[i * 8 + 0] = v.p.x;
+			m_vertices[i * 8 + 1] = v.p.y;
+			m_vertices[i * 8 + 2] = v.p.z;
+			m_vertices[i * 8 + 3] = v.uv.u;
+			m_vertices[i * 8 + 4] = v.uv.v;
+			m_vertices[i * 8 + 5] = v.normal.x;
+			m_vertices[i * 8 + 6] = v.normal.y;
+			m_vertices[i * 8 + 7] = v.normal.z;
 			i++;
 		}
 
@@ -199,8 +215,6 @@ namespace engine
 			m_texturePath = basedir + "\\" + materials[0].diffuse_texname;
 			//TODO more textures per model
 		}
-
-		//TODO: retrieve more data
 	}
 
 	void MeshComponent::Render(const Camera& camera, GameObject* obj)
@@ -210,7 +224,7 @@ namespace engine
 		glm::mat4 mvp = camera.GetProjection() * camera.GetView() * model;
 
 		//Bind data
-		gl::VertexBuffer vb = gl::VertexBuffer(static_cast<void*>(m_vertices), sizeof(float) * m_vertexCount * 5);
+		gl::VertexBuffer vb = gl::VertexBuffer(static_cast<void*>(m_vertices), sizeof(float) * m_vertexCount * 8);
 		gl::IndexBuffer ib = gl::IndexBuffer(m_indices, m_indicesCount);
 		gl::VertexBufferLayout layout = gl::VertexBufferLayout();
 		layout.Push<float>(3);
@@ -230,7 +244,7 @@ namespace engine
 			{
 				m_shader = new gl::Shader("res/shaders/TextureShader.shader");
 				m_shader->SetUniformMat4f("u_MVP", mvp);
-				m_shader->SetUniform1i("TextureSampler", 0);
+				m_shader->SetUniform1i("u_TextureSampler", 0);
 			}
 			else
 			{
@@ -242,8 +256,10 @@ namespace engine
 
 		if (m_texture)
 		{
-			
+			//texture coords
 			layout.Push<float>(2);
+			//normals
+			layout.Push<float>(3);
 			gl::VertexArray va = gl::VertexArray();
 			va.AddBuffer(vb, layout);
 			m_texture->Bind();
@@ -252,6 +268,7 @@ namespace engine
 		}
 		else
 		{
+			layout.Push<float>(3);
 			gl::VertexArray va = gl::VertexArray();
 			va.AddBuffer(vb, layout);
 			gl::Renderer r = gl::Renderer();

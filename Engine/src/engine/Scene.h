@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include "GameObject.h"
+#include "LightSource.h"
 
 namespace engine {
 	class Scene
@@ -9,6 +10,7 @@ namespace engine {
 		std::string m_id;
 		Camera m_mainCamera = Camera::PerspectiveCamera(Transform(glm::vec3(0.0f)), 45.0f, 1920, 1080, 100.0f, 0.1f);;
 		std::vector<GameObject*> m_objects;
+		std::vector<LightSource*> m_lightSources;
 
 	public:
 		Scene(std::string id);
@@ -18,6 +20,7 @@ namespace engine {
 		Camera* GetCamera() { return &m_mainCamera; }
 		const std::string& GetId() const;
 		void AddGameObject(GameObject* obj);
+		void AddLightSource(LightSource* lsrc);
 
 		void RenderScene();
 	};

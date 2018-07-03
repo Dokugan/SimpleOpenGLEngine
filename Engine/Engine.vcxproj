@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\engine\DirectionalLight.h" />
+    <ClInclude Include="src\engine\LightSource.h" />
     <ClInclude Include="src\engine\MeshComponent.h" />
     <ClInclude Include="src\gl\Shader.h" />
     <ClInclude Include="src\gl\IndexBuffer.h" />
@@ -183,6 +185,8 @@
     <ClInclude Include="src\gl\Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\engine\DirectionalLight.cpp" />
+    <ClCompile Include="src\engine\LightSource.cpp" />
     <ClCompile Include="src\engine\MeshComponent.cpp" />
     <ClCompile Include="src\gl\Shader.cpp" />
     <ClCompile Include="src\gl\IndexBuffer.cpp" />

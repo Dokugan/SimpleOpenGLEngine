@@ -26,6 +26,11 @@ namespace engine {
 		m_objects.push_back(obj);
 	}
 
+	void Scene::AddLightSource(LightSource* lsrc)
+	{
+		m_lightSources.push_back(lsrc);
+	}
+
 	void Scene::RenderScene()
 	{
 		for (GameObject* obj : m_objects)
