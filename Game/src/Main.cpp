@@ -1,6 +1,7 @@
 #include "engine/GameWindow.h"
 #include "engine/MeshComponent.h"
 #include <windows.h>
+#include <iostream>
 
 void Update()
 {

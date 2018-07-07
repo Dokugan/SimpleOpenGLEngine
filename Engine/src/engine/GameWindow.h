@@ -1,11 +1,9 @@
 #pragma once
 #include <string>
-#include <vector>
-#include <gl/glew.h>
-#include <GLFW/glfw3.h>
 #include "Game.h"
 #include <thread>
 
+typedef struct GLFWwindow GLFWwindow;
 
 namespace engine {
 	class GameWindow

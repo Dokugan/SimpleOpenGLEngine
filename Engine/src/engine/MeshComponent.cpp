@@ -10,6 +10,7 @@
 #include "../vendor/tiny_obj_loader.h"
 #include "../vendor/glm/gtx/transform.hpp"
 #include <GLFW/glfw3.h>
+#include "../gl/Texture.h"
 
 
 namespace engine

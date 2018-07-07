@@ -1,9 +1,14 @@
 #pragma once
 #include "Component.h"
 #include "GameObject.h"
-#include "../gl/Texture.h"
 
 namespace engine {
+
+	namespace gl
+	{
+		class Texture;
+		class Shader;
+	}
 
 	class MeshComponent :
 		public Component

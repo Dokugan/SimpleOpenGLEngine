@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "Transform.h"
 #include "Camera.h"
+#include <iostream>
 
 namespace engine {
 
