@@ -1,11 +1,14 @@
 #include "engine/GameWindow.h"
 #include "engine/MeshComponent.h"
 #include <windows.h>
+#include <iostream>
 
 void Update()
 {
 	
 }
+
+void KeyboardEvent(){}
 
 int main(int argc, char* argv[])
 {
@@ -19,7 +22,7 @@ int main(int argc, char* argv[])
 		Sleep(1);
 	}
 	window->GetWindowSize(&width, &height);
-	Camera camera = Camera::PerspectiveCamera(Transform(glm::vec3(-5.0f, 5.0f, 5.0f)), 45.0f, static_cast<float>(width), static_cast<float>(height), 200.0f, 0.1f);
+	CameraComponent camera = CameraComponent::PerspectiveCamera(TransformComponent(glm::vec3(-5.0f, 5.0f, 5.0f)), 45.0f, static_cast<float>(width), static_cast<float>(height), 200.0f, 0.1f);
 	mainScene->SetCamera(camera);
 	GameObject* obj = new GameObject();
 	obj->AddComponent(new MeshComponent("res/models/texturedcube.obj"));

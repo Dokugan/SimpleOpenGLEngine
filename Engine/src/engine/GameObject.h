@@ -1,9 +1,10 @@
 #pragma once
 #include <vector>
 #include <typeinfo>
+#include <iostream>
 #include "Component.h"
-#include "Transform.h"
-#include "Camera.h"
+#include "TransformComponent.h"
+#include "CameraComponent.h"
 
 namespace engine {
 
@@ -13,7 +14,7 @@ namespace engine {
 
 	public:
 		GameObject();
-		GameObject(Transform* transform);
+		GameObject(TransformComponent* transform);
 		~GameObject();
 
 		void AddComponent(Component* component);
@@ -42,6 +43,6 @@ namespace engine {
 			return nullptr;
 		}
 
-		void Render(const Camera& camera);
+		void Render(const CameraComponent& camera);
 	};
 }

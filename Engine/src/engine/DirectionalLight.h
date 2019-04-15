@@ -1,6 +1,6 @@
 #pragma once
 #include "LightSource.h"
-#include "../vendor/glm/glm.hpp"
+#include "../ext/glm/glm.hpp"
 
 namespace engine {
 	class DirectionalLight :

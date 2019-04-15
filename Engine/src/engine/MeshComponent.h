@@ -1,9 +1,14 @@
 #pragma once
 #include "Component.h"
 #include "GameObject.h"
-#include "../gl/Texture.h"
 
 namespace engine {
+
+	namespace gl
+	{
+		class Texture;
+		class Shader;
+	}
 
 	class MeshComponent :
 		public Component
@@ -25,7 +30,7 @@ namespace engine {
 		MeshComponent(const std::string& modelFilePath);
 		~MeshComponent();
 
-		void Render(const Camera& camera, GameObject* obj);
+		void Render(const CameraComponent& camera, GameObject* obj);
 
 	};
 

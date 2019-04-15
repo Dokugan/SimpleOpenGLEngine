@@ -1,15 +1,16 @@
+#include "MeshComponent.h"
 #include <filesystem>
 
 #ifndef TINYOBJLOADER_IMPLEMENTATION
 #define TINYOBJLOADER_IMPLEMENTATION
 #endif 
 
-#include "MeshComponent.h"
+//#include <GLFW/glfw3.h>
 #include "../gl/Renderer.h"
 #include "../gl/VertexBufferLayout.h"
-#include "../vendor/tiny_obj_loader.h"
-#include "../vendor/glm/gtx/transform.hpp"
-#include <GLFW/glfw3.h>
+#include "../ext/tiny_obj_loader.h"
+#include "../ext/glm/gtx/transform.hpp"
+#include "../gl/Texture.h"
 
 
 namespace engine
@@ -217,10 +218,10 @@ namespace engine
 		}
 	}
 
-	void MeshComponent::Render(const Camera& camera, GameObject* obj)
+	void MeshComponent::Render(const CameraComponent& camera, GameObject* obj)
 	{
 		//Calculate Model view and projection matrices
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), obj->GetComponent<Transform>()->GetPosition());
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), obj->GetComponent<TransformComponent>()->GetPosition());
 		glm::mat4 mvp = camera.GetProjection() * camera.GetView() * model;
 
 		//Bind data

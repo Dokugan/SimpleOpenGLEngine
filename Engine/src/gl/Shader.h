@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <unordered_map>
-#include "../vendor/glm/glm.hpp"
+#include "../ext/glm/glm.hpp"
 
 namespace engine
 {
