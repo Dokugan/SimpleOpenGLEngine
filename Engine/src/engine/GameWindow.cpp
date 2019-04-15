@@ -8,6 +8,9 @@
 
 namespace engine {
 
+	GameWindow::key_cb_func GameWindow::key_callback = nullptr;
+	GameWindow::mouse_cb_func GameWindow::mouse_callback = nullptr;
+
 	GameWindow::GameWindow(const int windowWidth, const int windowHeight, const std::string& title, void(*update_func)()):
 	m_windowWidth(windowWidth), m_windowHeight(windowHeight), Update(update_func)
 	{
@@ -19,15 +22,21 @@ namespace engine {
 	GameWindow::~GameWindow()
 		= default;
 
-	// void GameWindow::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-	// {
-	// 	key_cb_func(key, scancode, action, mods);
-	// }
+	 void GameWindow::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	 {
+		 if (key_callback != nullptr)
+		 {
+			 key_callback(key, scancode, action, mods);
+		 }
+	 }
 
-	// void GameWindow::MouseCallback(GLFWwindow* window, int button, int action, int mods)
-	// {
-	// 	mouse_cb_func(button, action, mods);
-	// }
+	 void GameWindow::MouseCallback(GLFWwindow* window, int button, int action, int mods)
+	 {
+		 if (mouse_callback != nullptr)
+		 {
+			 mouse_callback(button, action, mods);
+		 }
+	 }
 
 	void GameWindow::SetupWindow()
 	{
@@ -45,8 +54,10 @@ namespace engine {
 		glewInit();
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
-		//glfwSetKeyCallback(m_window, this->KeyCallback);
-		//glfwSetMouseButtonCallback(m_window, MouseCallback);
+		key_callback = nullptr;
+		mouse_callback = nullptr;
+		glfwSetKeyCallback(m_window, KeyCallback);
+		glfwSetMouseButtonCallback(m_window, MouseCallback);
 		m_init = true;
 		GameLoop();
 	}
@@ -66,15 +77,15 @@ namespace engine {
 		glfwGetWindowSize(m_window, width, height);
 	}
 
-	// void GameWindow::SetKeyCallback(void(* key_func)(int key, int scancode, int action, int mods)) const
-	// {
-	// 	key_cb_func = key_func;
-	// }
+	 void GameWindow::SetKeyCallback(void(* cb_func)(int key, int scancode, int action, int mods))
+	 {
+	 	key_callback = cb_func;
+	 }
 
-	// void GameWindow::SetMouseClickCallback(void(* click_func)(GLFWwindow*, int button, int action, int mods)) const
-	// {
-	// 	glfwSetMouseButtonCallback(m_window, click_func);
-	// }
+	 void GameWindow::SetMouseClickCallback(void(* cb_func)(int button, int action, int mods))
+	 {
+		 mouse_callback = cb_func;
+	 }
 
 	void GameWindow::GameLoop() const
 	{

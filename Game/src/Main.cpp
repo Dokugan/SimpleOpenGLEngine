@@ -8,7 +8,10 @@ void Update()
 	
 }
 
-void KeyboardEvent(){}
+void KeyboardEvent(int key, int scancode, int action, int mods)
+{
+	std::cout << key;
+}
 
 int main(int argc, char* argv[])
 {
@@ -27,5 +30,6 @@ int main(int argc, char* argv[])
 	GameObject* obj = new GameObject();
 	obj->AddComponent(new MeshComponent("res/models/texturedcube.obj"));
 	mainScene->AddGameObject(obj);
+	GameWindow::SetKeyCallback(&KeyboardEvent);
 	std::cin.get();
 }

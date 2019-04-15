@@ -21,14 +21,15 @@ namespace engine {
 		void(*Update)();
 		std::thread m_gameThread;
 
-		static void(*key_cb_func)(int, int, int, int);
-		static void(*mouse_cb_func)(int, int, int);
-
-		//static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-		//static void MouseCallback(GLFWwindow* window, int button, int action, int mods);
+		static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+		static void MouseCallback(GLFWwindow* window, int button, int action, int mods);
 
 	public:
 		bool m_init = false;
+		typedef void(*key_cb_func)(int, int, int, int);
+		typedef void(*mouse_cb_func)(int, int, int);
+		static key_cb_func key_callback;
+		static mouse_cb_func mouse_callback;
 
 		GameWindow(int windowWidth, int windowHeight, const std::string& title, void(*updateFunc)());
 		~GameWindow();
@@ -38,8 +39,8 @@ namespace engine {
 
 		int GetMouseButtonState(int mousebtn) const;
 		void GetWindowSize(int* width, int* height) const;
-		// static void SetKeyCallback(void (*key_func)(GLFWwindow*, int key, int scancode, int action, int mods)) const;
-		// static void SetMouseClickCallback(void(*click_func)(GLFWwindow *, int button, int action, int mods)) const;
+		static void SetKeyCallback(void (*cb_func)(int key, int scancode, int action, int mods));
+		static void SetMouseClickCallback(void(*cb_func)(int button, int action, int mods));
 
 		Game* GetGame() const { return m_game; };
 	private:
