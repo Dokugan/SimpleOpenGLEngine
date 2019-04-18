@@ -3,12 +3,26 @@
 #include <thread>
 #include "Game.h"
 #include "Config.h"
+#include <map>
 
 typedef struct GLFWwindow GLFWwindow;
 
 namespace engine {
 	// class Game;
 	// class Config;
+	typedef struct
+	{
+		int key;
+		int scancode;
+		int action;
+		int mods;
+	} KeyEvent;
+
+	// typedef struct
+	// {
+	// 	int button;
+	// 	int 
+	// } MouseButtonEvent;
 
 	class GameWindow
 	{
@@ -20,16 +34,22 @@ namespace engine {
 		Config* m_config;
 		void(*Update)();
 		std::thread m_gameThread;
+		std::map<int, int> m_key_status;
+		std::map<int, int> m_mouse_status;
+
+		glm::vec2 inputAxis;
 
 		static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 		static void MouseCallback(GLFWwindow* window, int button, int action, int mods);
+		void ComputeInputAxis();
 
 	public:
 		bool m_init = false;
+
 		typedef void(*key_cb_func)(int, int, int, int);
 		typedef void(*mouse_cb_func)(int, int, int);
-		static key_cb_func key_callback;
-		static mouse_cb_func mouse_callback;
+		key_cb_func key_callback = nullptr;
+		mouse_cb_func mouse_callback = nullptr;
 
 		GameWindow(int windowWidth, int windowHeight, const std::string& title, void(*updateFunc)());
 		~GameWindow();
@@ -37,33 +57,16 @@ namespace engine {
 		void SetupWindow();
 		void SetWindowResizeCallback(void(*cbfunc)(GLFWwindow *, int, int)) const;
 
+		glm::vec2* GetInputAxis();
+
 		int GetMouseButtonState(int mousebtn) const;
 		void GetWindowSize(int* width, int* height) const;
-		static void SetKeyCallback(void (*cb_func)(int key, int scancode, int action, int mods));
-		static void SetMouseClickCallback(void(*cb_func)(int button, int action, int mods));
+		void SetKeyCallback(void (*cb_func)(int key, int scancode, int action, int mods));
+		void SetMouseClickCallback(void(*cb_func)(int button, int action, int mods));
+		int GetKeyStatus(int key) const;
 
 		Game* GetGame() const { return m_game; };
 	private:
-		void GameLoop() const;
-	};
-
-	enum Mouse
-	{
-		#define MOUSE_BUTTON_1   0
-		#define MOUSE_BUTTON_2   1
-		#define MOUSE_BUTTON_3   2
-		#define MOUSE_BUTTON_4   3
-		#define MOUSE_BUTTON_5   4
-		#define MOUSE_BUTTON_6   5
-		#define MOUSE_BUTTON_7   6
-		#define MOUSE_BUTTON_8   7
-		#define MOUSE_BUTTON_LAST   GLFW_MOUSE_BUTTON_8
-		#define MOUSE_BUTTON_LEFT   GLFW_MOUSE_BUTTON_1
-		#define MOUSE_BUTTON_MIDDLE   GLFW_MOUSE_BUTTON_3
-		#define MOUSE_BUTTON_RIGHT   GLFW_MOUSE_BUTTON_2
-
-		#define RELEASE 0
-		#define PRESS 1
-		#define REPEAT 2
+		void GameLoop();
 	};
 }

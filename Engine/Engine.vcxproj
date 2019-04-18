@@ -21,8 +21,10 @@
   <ItemGroup>
     <ClInclude Include="src\engine\Config.h" />
     <ClInclude Include="src\engine\DirectionalLight.h" />
+    <ClInclude Include="src\engine\Input.h" />
     <ClInclude Include="src\engine\LightSource.h" />
     <ClInclude Include="src\engine\MeshComponent.h" />
+    <ClInclude Include="src\engine\Util.h" />
     <ClInclude Include="src\gl\Shader.h" />
     <ClInclude Include="src\gl\IndexBuffer.h" />
     <ClInclude Include="src\gl\Renderer.h" />

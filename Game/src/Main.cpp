@@ -2,10 +2,14 @@
 #include "engine/MeshComponent.h"
 #include <windows.h>
 #include <iostream>
+#include "engine/Input.h"
+
+engine::GameWindow* window;
 
 void Update()
 {
-	
+	glm::vec2* i = window->GetInputAxis();
+	std::cout << i->x << ", " << i->y << '\n';
 }
 
 void KeyboardEvent(int key, int scancode, int action, int mods)
@@ -16,7 +20,7 @@ void KeyboardEvent(int key, int scancode, int action, int mods)
 int main(int argc, char* argv[])
 {
 	using namespace engine;
-	GameWindow* window = new GameWindow(1920, 1080, "TestWindow", Update);
+	window = new GameWindow(1920, 1080, "TestWindow", Update);
 	Game* game = window->GetGame();
 	Scene* mainScene = game->AddScene("Mainscene");
 	int width = 0, height = 0;
@@ -30,6 +34,6 @@ int main(int argc, char* argv[])
 	GameObject* obj = new GameObject();
 	obj->AddComponent(new MeshComponent("res/models/texturedcube.obj"));
 	mainScene->AddGameObject(obj);
-	GameWindow::SetKeyCallback(&KeyboardEvent);
+	//window->SetKeyCallback(&KeyboardEvent);
 	std::cin.get();
 }
