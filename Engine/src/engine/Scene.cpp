@@ -1,9 +1,9 @@
 #include "Scene.h"
-#include <utility>
+//#include <utility>
 
 
 namespace engine {
-	Scene::Scene(std::string id):
+	Scene::Scene(std::string id) :
 		m_id(std::move(id))
 	{}
 
@@ -11,7 +11,7 @@ namespace engine {
 	Scene::~Scene()
 		= default;
 
-	void Scene::SetCamera(Camera& camera)
+	void Scene::SetCamera(CameraComponent& camera)
 	{
 		m_mainCamera = camera;
 	}
@@ -24,6 +24,11 @@ namespace engine {
 	void Scene::AddGameObject(GameObject* obj)
 	{
 		m_objects.push_back(obj);
+	}
+
+	void Scene::AddLightSource(LightSource* lsrc)
+	{
+		m_lightSources.push_back(lsrc);
 	}
 
 	void Scene::RenderScene()

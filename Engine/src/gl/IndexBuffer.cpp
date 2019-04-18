@@ -1,6 +1,7 @@
-#include <GL/glew.h>
-
 #include "IndexBuffer.h"
+#if !defined(__gl_h_) && !defined(__GL_H__) && !defined(_GL_H) && !defined(__X_GL_H)
+#include <GL/glew.h>
+#endif
 #include "Renderer.h"
 
 namespace engine

@@ -1,9 +1,9 @@
 #pragma once
 #include "Component.h"
-#include "../vendor/glm/glm.hpp"
+#include "../ext/glm/glm.hpp"
 
 namespace engine {
-	class Transform :
+	class TransformComponent :
 		public Component
 	{
 		glm::vec3 m_position;
@@ -11,9 +11,9 @@ namespace engine {
 		float m_scale;
 
 	public:
-		Transform();
-		Transform(glm::vec3 position);
-		Transform(glm::vec3 position, glm::vec3 rotation);
+		TransformComponent();
+		TransformComponent(glm::vec3 position);
+		TransformComponent(glm::vec3 position, glm::vec3 rotation);
 
 		glm::vec3 GetPosition() const;
 

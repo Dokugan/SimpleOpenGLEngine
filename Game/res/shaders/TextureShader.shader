@@ -3,6 +3,7 @@
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 vertexUV;
+layout(location = 2) in vec3 normal;
 
 uniform mat4 u_MVP;
 
@@ -15,6 +16,8 @@ void main()
 	UV = vertexUV;
 };
 
+//====================================================================================================================================================
+
 #shader fragment
 #version 330 core
 
@@ -22,9 +25,10 @@ in vec2 UV;
 
 out vec4 color;
 
-uniform sampler2D textureSampler;
+// Values that stay constant for the whole mesh.
+uniform sampler2D u_TextureSampler;
 
 void main()
 {
-	color = texture(textureSampler, UV);
+	color = texture(u_TextureSampler, UV);
 };

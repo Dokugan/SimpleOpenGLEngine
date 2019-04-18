@@ -5,11 +5,11 @@
 namespace engine {
 	GameObject::GameObject()
 	{
-		Transform* transform = new Transform();
+		TransformComponent* transform = new TransformComponent();
 		m_components.push_back(transform);
 	}
 
-	GameObject::GameObject(Transform* transform)
+	GameObject::GameObject(TransformComponent* transform)
 	{
 		m_components.push_back(transform);
 	}
@@ -27,7 +27,7 @@ namespace engine {
 		m_components.push_back(component);
 	}
 
-	void GameObject::Render(const Camera& camera)
+	void GameObject::Render(const CameraComponent& camera)
 	{
 		MeshComponent* mesh = GetComponent<MeshComponent>();
 		if (mesh != nullptr)
