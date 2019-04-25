@@ -1,5 +1,5 @@
 #shader vertex
-#version 330 core
+#version 420 core
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 vertexUV;
@@ -19,7 +19,7 @@ void main()
 //====================================================================================================================================================
 
 #shader fragment
-#version 330 core
+#version 420 core
 
 in vec2 UV;
 

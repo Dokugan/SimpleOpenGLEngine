@@ -21,7 +21,7 @@ namespace engine {
 		{
 			if (s->GetId() == id)
 			{
-				m_avtiveScene = s;
+				m_activeScene = s;
 			}
 		}
 	}
@@ -30,17 +30,28 @@ namespace engine {
 	{
 		const auto newScene = new Scene(id);
 		m_scenes.push_back(newScene);
-		m_avtiveScene = newScene;
+		m_activeScene = newScene;
 		return newScene;
 	}
 
 	Scene* Game::GetActiveScene()
 	{
-		return m_avtiveScene;
+		return m_activeScene;
+	}
+
+	void Game::Update()
+	{
+		if (m_activeScene)
+		{
+			for (GameObject* obj : m_activeScene->GetObjects())
+			{
+				obj->Update();
+			}
+		}
 	}
 
 	void Game::RenderScene()
 	{
-		m_avtiveScene->RenderScene();
+		m_activeScene->RenderScene();
 	}
 }

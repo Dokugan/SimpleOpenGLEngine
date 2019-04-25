@@ -136,6 +136,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ChildGameObject.cpp" />
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -144,9 +145,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\shaders\BackgroundShader.shader" />
-    <None Include="res\shaders\Basic.shader" />
-    <None Include="res\shaders\TextureShader.shader" />
+    <None Include="res\shaders\BackgroundShader.glsl" />
+    <None Include="res\shaders\Basic.glsl" />
+    <None Include="res\shaders\TextureShader.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ChildGameObject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

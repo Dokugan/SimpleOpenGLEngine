@@ -174,6 +174,7 @@ namespace engine {
 		{	
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			Update();
+			m_game->Update();
 			if (m_game->GetActiveScene())
 			{
 				m_game->RenderScene();

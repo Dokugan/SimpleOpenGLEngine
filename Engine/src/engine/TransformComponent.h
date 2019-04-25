@@ -22,6 +22,6 @@ namespace engine {
 
 		void Rotate(glm::vec3 rotation);
 		void Scale(float scale);
-		void Translate(glm::vec3 destination);
+		void Translate(glm::vec3 movement);
 	};
 }

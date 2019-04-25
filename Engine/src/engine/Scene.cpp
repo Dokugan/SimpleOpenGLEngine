@@ -11,7 +11,7 @@ namespace engine {
 	Scene::~Scene()
 		= default;
 
-	void Scene::SetCamera(CameraComponent& camera)
+	void Scene::SetCamera(CameraComponent* camera)
 	{
 		m_mainCamera = camera;
 	}
@@ -35,7 +35,10 @@ namespace engine {
 	{
 		for (GameObject* obj : m_objects)
 		{
-			obj->Render(m_mainCamera);
+			if (m_mainCamera)
+			{
+				obj->Render(m_mainCamera);
+			}			
 		}
 	}
 }

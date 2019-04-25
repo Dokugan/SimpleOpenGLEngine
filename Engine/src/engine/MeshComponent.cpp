@@ -219,11 +219,18 @@ namespace engine
 		}
 	}
 
-	void MeshComponent::Render(const CameraComponent& camera, GameObject* obj)
+	void MeshComponent::Render(const CameraComponent* camera, GameObject* obj)
 	{
 		//Calculate Model view and projection matrices
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), obj->GetComponent<TransformComponent>()->GetPosition());
-		glm::mat4 mvp = camera.GetProjection() * camera.GetView() * model;
+		glm::mat4 identity = glm::mat4(	1, 0, 0, 0,
+										0, 1, 0, 0, 
+										0, 0, 1, 0, 
+										0, 0, 0, 1);
+		glm::mat4 model = glm::translate(identity, obj->GetComponent<TransformComponent>()->GetPosition());
+		glm::mat4 projection = glm::perspective(glm::radians(camera->GetFov()), camera->GetWidth() / camera->GetHeight(),
+			camera->GetNear(), camera->GetFar());
+		glm::mat4 view = camera->GetView();
+		glm::mat4 mvp = projection * view * model;
 
 		//Bind data
 		gl::VertexBuffer vb = gl::VertexBuffer(static_cast<void*>(m_vertices), sizeof(float) * m_vertexCount * 8);
@@ -244,17 +251,17 @@ namespace engine
 		{
 			if (!m_texturePath.empty())
 			{
-				m_shader = new gl::Shader("res/shaders/TextureShader.shader");
-				m_shader->SetUniformMat4f("u_MVP", mvp);
+				m_shader = new gl::Shader("res/shaders/TextureShader.glsl");
 				m_shader->SetUniform1i("u_TextureSampler", 0);
 			}
 			else
 			{
-				m_shader = new gl::Shader("res/shaders/Basic.shader");
-				m_shader->SetUniformMat4f("u_MVP", mvp);
+				m_shader = new gl::Shader("res/shaders/Basic.glsl");
 				m_shader->SetUniform4f("u_Color", 1.0f, 0.0f, 0.0f, 1.0f);
 			}
 		}
+
+		m_shader->SetUniformMat4f("u_MVP", mvp);
 
 		if (m_texture)
 		{

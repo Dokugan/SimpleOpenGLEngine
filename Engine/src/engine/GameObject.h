@@ -15,7 +15,9 @@ namespace engine {
 	public:
 		GameObject();
 		GameObject(TransformComponent* transform);
-		~GameObject();
+		virtual ~GameObject();
+
+		virtual void Update(){}
 
 		void AddComponent(Component* component);
 
@@ -43,6 +45,6 @@ namespace engine {
 			return nullptr;
 		}
 
-		void Render(const CameraComponent& camera);
+		void Render(const CameraComponent* camera);
 	};
 }

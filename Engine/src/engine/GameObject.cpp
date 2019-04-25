@@ -5,7 +5,7 @@
 namespace engine {
 	GameObject::GameObject()
 	{
-		TransformComponent* transform = new TransformComponent();
+		auto transform = new TransformComponent();
 		m_components.push_back(transform);
 	}
 
@@ -27,9 +27,9 @@ namespace engine {
 		m_components.push_back(component);
 	}
 
-	void GameObject::Render(const CameraComponent& camera)
+	void GameObject::Render(const CameraComponent* camera)
 	{
-		MeshComponent* mesh = GetComponent<MeshComponent>();
+		auto mesh = GetComponent<MeshComponent>();
 		if (mesh != nullptr)
 		{
 			mesh->Render(camera, this);

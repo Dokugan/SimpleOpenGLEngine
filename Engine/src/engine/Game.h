@@ -7,7 +7,7 @@ namespace engine {
 	class Game
 	{
 		std::vector<Scene*> m_scenes;
-		Scene* m_avtiveScene = nullptr;
+		Scene* m_activeScene = nullptr;
 
 	public:
 		Game();
@@ -17,6 +17,7 @@ namespace engine {
 		Scene* AddScene(const std::string& id);
 		Scene* GetActiveScene();
 
+		void Update();
 		void RenderScene();
 	};
 }
