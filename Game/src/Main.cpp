@@ -11,7 +11,7 @@ void Update()
 {
 	if (camera)
 	{
-		camera->GetTransform()->Translate(glm::vec3(-.1f, -0.1f, 0.1f));
+		
 	}
 }
 
@@ -32,10 +32,9 @@ int main(int argc, char* argv[])
 		Sleep(1);
 	}
 	window->GetWindowSize(&width, &height);
-	camera = CameraComponent::PerspectiveCamera(new TransformComponent(glm::vec3(.0f, .0f, .0f)), 45.0f, static_cast<float>(width), static_cast<float>(height), 200.0f, 0.1f);
+	camera = CameraComponent::PerspectiveCamera(new TransformComponent(glm::vec3(.0f, 0.f, .0f)), 45.0f, static_cast<float>(width), static_cast<float>(height), 200.0f, 0.1f);
 	mainScene->SetCamera(camera);
 	GameObject* obj = new GameObject(new TransformComponent(glm::vec3(5.0f, 0.0f, 0.0f)));
-	camera->LookAt(obj->GetComponent<TransformComponent>()->GetPosition());
 	obj->AddComponent(new MeshComponent("res/models/texturedcube.obj"));
 	mainScene->AddGameObject(obj);
 	//window->SetKeyCallback(&KeyboardEvent);

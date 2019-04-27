@@ -1,5 +1,7 @@
 #include "CameraComponent.h"
 #include "../ext/glm/gtc/matrix_transform.hpp"
+#include "../ext/glm/gtx/quaternion.hpp"
+#include "../ext/glm/gtx/matrix_decompose.inl"
 
 namespace engine
 {
@@ -53,7 +55,44 @@ namespace engine
 
 	glm::mat4 CameraComponent::GetView() const
 	{
-		return glm::lookAt(m_transform->GetPosition(), m_lookat, glm::vec3(0, 1, 0));;
+		//variables for decomposition
+		glm::vec3 lookat;
+		glm::vec3 scale;
+		glm::quat rot = glm::quat(0, 0, 0, 0);
+		glm::vec3 skew;
+		glm::vec4 perspective = glm::vec4(0);
+
+		//get rotation
+		glm::quat rotation = m_transform->GetRotation();
+		//get translation matrix
+		glm::mat4 translationmat = glm::translate(GetIdentityMatrix(), m_transform->GetPosition());
+
+		// get rotation matrix from rotation
+		float angle = 2 * acos(rotation.w);
+		glm::mat4 rotationmat;
+		// when angle = 0 divide by 0 error occurs
+		if (angle != 0.f)
+		{
+			rotationmat = glm::rotate(GetIdentityMatrix(), angle, glm::vec3(
+				rotation.x / sqrt(1 - rotation.w * rotation.w),
+				rotation.y / sqrt(1 - rotation.w * rotation.w),
+				rotation.z / sqrt(1 - rotation.w * rotation.w)));
+		}
+		else { rotationmat = GetIdentityMatrix(); }
+
+		// first rotate then translate
+		glm::mat4 transformation = translationmat * rotationmat;
+
+		//translate rotation matrix 1 in the relative y direction to get the relative up direction
+		glm::mat4 upmat = glm::translate(rotationmat, glm::vec3(0, 1, 0));
+		glm::decompose(upmat, scale, rot, lookat, skew, perspective);
+		glm::vec3 up = lookat;
+
+		//transform the complete transformation(rotation + translation) to worldspace by 1 in the relative x direction to get the forward vector
+		transformation = glm::translate(transformation, glm::vec3(1, 0, 0));
+		glm::decompose(transformation, scale, rot, lookat, skew, perspective);
+
+		return glm::lookAt(m_transform->GetPosition(), lookat, up);;
 	}
 
 	void CameraComponent::LookAt(glm::vec3 lookAt)

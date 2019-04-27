@@ -222,11 +222,7 @@ namespace engine
 	void MeshComponent::Render(const CameraComponent* camera, GameObject* obj)
 	{
 		//Calculate Model view and projection matrices
-		glm::mat4 identity = glm::mat4(	1, 0, 0, 0,
-										0, 1, 0, 0, 
-										0, 0, 1, 0, 
-										0, 0, 0, 1);
-		glm::mat4 model = glm::translate(identity, obj->GetComponent<TransformComponent>()->GetPosition());
+		glm::mat4 model = obj->GetComponent<TransformComponent>()->GetModelMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(camera->GetFov()), camera->GetWidth() / camera->GetHeight(),
 			camera->GetNear(), camera->GetFar());
 		glm::mat4 view = camera->GetView();

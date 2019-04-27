@@ -1,56 +1,79 @@
 #include "TransformComponent.h"
-#include "../ext/glm/gtx/rotate_vector.hpp"
+#include "../ext/glm/glm.hpp"
+#include "../ext/glm/gtx/transform.hpp"
+#include "../ext/glm/gtc/quaternion.hpp"
+#include "../ext/glm/gtx/matrix_decompose.hpp"
+#include "../ext/glm/gtx/quaternion.hpp"
 
 
 namespace engine {
-	TransformComponent::TransformComponent() :
-		m_position(glm::vec3(0.0f)), m_rotation(glm::vec3(0.0f)), m_scale(1)
+
+	glm::mat4 GetIdentityMatrix()
 	{
+		return glm::mat4(1.f, 0.f, 0.f, 0.f,
+			0.f, 1.f, 0.f, 0.f,
+			0.f, 0.f, 1.f, 0.f,
+			0.f, 0.f, 0.f, 1.f);
 	}
 
-	TransformComponent::TransformComponent(glm::vec3 position) :
-		m_position(position), m_rotation(glm::vec3(0.0f)), m_scale(1)
+	TransformComponent::TransformComponent()
 	{
+		m_model_matrix = GetIdentityMatrix();
 	}
 
-	TransformComponent::TransformComponent(glm::vec3 position, glm::vec3 rotation) :
-		m_position(position), m_rotation(rotation), m_scale(1)
+	TransformComponent::TransformComponent(glm::vec3 position)		
 	{
+		m_model_matrix = GetIdentityMatrix();
+		m_model_matrix = glm::translate(m_model_matrix, position);
 	}
 
+	TransformComponent::TransformComponent(glm::vec3 position, glm::quat rotation)
+	{
+		m_model_matrix = GetIdentityMatrix();
+		m_model_matrix = glm::translate(m_model_matrix, position);
+		//m_model_matrix = Rotate()
+	}
+
+	glm::mat4 TransformComponent::GetModelMatrix() const { return m_model_matrix; }
 
 	glm::vec3 TransformComponent::GetPosition() const
 	{
-		return m_position;
+		glm::vec3 scale;
+		glm::quat rotation = glm::quat(0,0,0,0);
+		glm::vec3 translation;
+		glm::vec3 skew;
+		glm::vec4 perspective = glm::vec4(0);
+		glm::decompose(m_model_matrix, scale, rotation, translation, skew, perspective);
+		return translation;
 	}
 
-	void TransformComponent::SetScale(float scale)
+	glm::quat TransformComponent::GetRotation() const
 	{
-		m_scale = scale;
+		glm::vec3 scale;
+		glm::quat rotation = glm::quat(0, 0, 0, 0);
+		glm::vec3 translation;
+		glm::vec3 skew;
+		glm::vec4 perspective = glm::vec4(0);
+		glm::decompose(m_model_matrix, scale, rotation, translation, skew, perspective);
+		return rotation;
 	}
 
-	void TransformComponent::SetRotation(glm::vec3 rotation)
+	void TransformComponent::Scale(glm::vec3 scale)
 	{
-		m_rotation = rotation;
+		m_model_matrix = glm::scale(m_model_matrix, scale);
 	}
 
-	// Takes in vector 3 with (x, y, z) rotation in degrees
-	//prolly doesnt work
-	void TransformComponent::Rotate(glm::vec3 rotation)
-	{
-		glm::rotate(rotation.x, m_rotation);
-		glm::rotate(rotation.y, m_rotation);
-		glm::rotate(rotation.z, m_rotation);
-	}
+	// void TransformComponent::Rotate(glm::quat rotation)
+	// {
+	// }
 
-
-	void TransformComponent::Scale(float scale)
+	void TransformComponent::Rotate(glm::vec3 axis, float radians)
 	{
-		m_scale *= scale;
+		m_model_matrix = glm::rotate(m_model_matrix, radians, axis);
 	}
 
 	void TransformComponent::Translate(glm::vec3 movement)
 	{
-		m_position += movement;
+		m_model_matrix = glm::translate(m_model_matrix, movement);
 	}
 }
