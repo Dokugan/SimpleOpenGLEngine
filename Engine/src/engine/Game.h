@@ -17,7 +17,7 @@ namespace engine {
 		Scene* AddScene(const std::string& id);
 		Scene* GetActiveScene();
 
-		void Update();
+		void Update(double deltaTime);
 		void RenderScene();
 	};
 }

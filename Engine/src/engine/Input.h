@@ -1,5 +1,9 @@
 #pragma once
 
+#define CURSOR_NORMAL		0x00034001
+#define CURSOR_HIDDEN		0x00034002
+#define CURSOR_DISABLED		0x00034003
+
 #define MOUSE_BUTTON_1		0
 #define MOUSE_BUTTON_2		1
 #define MOUSE_BUTTON_3		2

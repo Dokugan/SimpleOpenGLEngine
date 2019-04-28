@@ -1,6 +1,6 @@
 ﻿#include "ChildGameObject.h"
 
-void ChildGameObject::Update()
+void ChildGameObject::Update(double dt)
 {
 	// auto transform = GetComponent<engine::TransformComponent>();
 	// transform->Translate(glm::vec3(.1f, 0.1f, 0.1f));

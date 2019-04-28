@@ -51,59 +51,6 @@ namespace engine
 		if (!ret) {
 			return;
 		}
-
-		// vertexCount = attrib.vertices.size();
-		// vertices = static_cast<float*>(malloc(sizeof(float) * vertexCount));
-		// int i = 0;
-		// for (float vert : attrib.vertices)
-		// {
-		// 	vertices[i] = vert;
-		// 	i++;
-		// }
-  //
-		// indicesCount = 0;
-		// for (auto o : shapes)
-		// {
-		// 	indicesCount += o.mesh.indices.size();
-		// }
-  //
-		// indices = static_cast<unsigned int*> (malloc(sizeof(unsigned int) * indicesCount));
-		// i = 0;
-		// for (const auto& o : shapes)
-		// {
-		// 	for (auto indice : o.mesh.indices)
-		// 	{
-		// 		indices[i] = indice.vertex_index;
-		// 		i++;
-		// 	}
-		// }
-  //
-		// m_uvCount = attrib.texcoords.size();
-		// m_uvBuffer = static_cast<float*>(malloc(sizeof(float) * m_uvCount));
-  //
-		// i = 0;
-		// for (float tex : attrib.texcoords)
-		// {
-		// 	m_uvBuffer[i] = tex;
-		// 	i++;
-		// }
-
-		//Code for rendering without vertex index
-		//				|
-		//				v
-
-		// int i = 0;
-		// indicesCount = shapes[0].mesh.indices.size();
-		// vertexCount = indicesCount * 3;
-		// vertices = new float[vertexCount];
-		// for (auto indice : shapes[0].mesh.indices)
-		// {
-		// 	vertices[i * 3] = attrib.vertices[indice.vertex_index * 3];
-		// 	vertices[i * 3 + 1] = attrib.vertices[indice.vertex_index * 3 + 1];
-		// 	vertices[i * 3 + 2] = attrib.vertices[indice.vertex_index * 3 + 2];
-		// 	i++;
-		// }
-
 		
 		struct position
 		{
@@ -140,7 +87,6 @@ namespace engine
 		std::vector<vertex> vertices;
 		std::vector<indice> madeCombination;
 		std::vector<int> indices;
-		//int idx = 0;
 		for (auto i : shapes[0].mesh.indices)
 		{
 			unsigned int v = i.vertex_index;
@@ -153,7 +99,6 @@ namespace engine
 				if (c.v == v && c.vt == vt && c.vn == vn)
 				{
 					indices.push_back(c.index);
-					//idx++;
 					shouldBreakOuter = true;
 				}
 			}
@@ -181,8 +126,6 @@ namespace engine
 
 			madeCombination.push_back({ static_cast<unsigned int>(madeCombination.size()) ,v, vt, vn});
 			indices.push_back(madeCombination[madeCombination.size() - 1].index);
-			//m_indices[idx] = madeCombination[madeCombination.size() - 1].index;
-			//idx++;
 		}
 
 		m_vertexCount = vertices.size();

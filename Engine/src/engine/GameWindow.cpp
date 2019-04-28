@@ -12,8 +12,8 @@ namespace engine {
 
 	static std::map<GLFWwindow*, GameWindow*> window_map;
 
-	GameWindow::GameWindow(const int windowWidth, const int windowHeight, const std::string& title, void(*update_func)()):
-	m_windowWidth(windowWidth), m_windowHeight(windowHeight), Update(update_func)
+	GameWindow::GameWindow(const int windowWidth, const int windowHeight, const std::string& title, update_func updateFunc) :
+		m_windowWidth(windowWidth), m_windowHeight(windowHeight), m_update(updateFunc)
 	{
 		m_game = new Game();
 		m_config = new Config();
@@ -23,41 +23,41 @@ namespace engine {
 	GameWindow::~GameWindow()
 		= default;
 
-	 void GameWindow::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-	 {
-		 auto it = window_map.find(window);
-		 if (it != window_map.end())
-		 {
-			 GameWindow* gameWindow = it->second;
-			 // std::cout << action;
-			 auto it2 = gameWindow->m_key_status.find(key);
-			 if (it2 != gameWindow->m_key_status.end())
-			 {
-				 it2->second = action;
-			 }
-			 else gameWindow->m_key_status.insert(std::pair<int,int>(key, action));
+	void GameWindow::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	{
+		auto it = window_map.find(window);
+		if (it != window_map.end())
+		{
+			GameWindow* gameWindow = it->second;
+			// std::cout << action;
+			auto it2 = gameWindow->m_key_status.find(key);
+			if (it2 != gameWindow->m_key_status.end())
+			{
+				it2->second = action;
+			}
+			else gameWindow->m_key_status.insert(std::pair<int, int>(key, action));
 
-			 if (gameWindow->key_callback != nullptr)
-			 {
-				 gameWindow->key_callback(key, scancode, action, mods);
-			 }
-		 }
-	 }
+			if (gameWindow->key_callback != nullptr)
+			{
+				gameWindow->key_callback(key, scancode, action, mods);
+			}
+		}
+	}
 
-	 void GameWindow::MouseCallback(GLFWwindow* window, int button, int action, int mods)
-	 {
-		 auto it = window_map.find(window);
-		 if (it != window_map.end())
-		 {
-			 GameWindow* gameWindow = it->second;
-			 gameWindow->m_mouse_status.insert(std::pair<int,int>(button, action));
+	void GameWindow::MouseCallback(GLFWwindow* window, int button, int action, int mods)
+	{
+		auto it = window_map.find(window);
+		if (it != window_map.end())
+		{
+			GameWindow* gameWindow = it->second;
+			gameWindow->m_mouse_status.insert(std::pair<int, int>(button, action));
 
-			 if (gameWindow->mouse_callback != nullptr)
-			 {
-				 gameWindow->mouse_callback(button, action, mods);
-			 }
-		 }
-	 }
+			if (gameWindow->mouse_callback != nullptr)
+			{
+				gameWindow->mouse_callback(button, action, mods);
+			}
+		}
+	}
 
 	void GameWindow::ComputeInputAxis()
 	{
@@ -105,6 +105,11 @@ namespace engine {
 
 	void GameWindow::SetupWindow()
 	{
+		int major;
+		int minor;
+		int rev;
+		glfwGetVersion(&major, &minor, &rev);
+		printf("%d.%d.%d", major, minor, rev);
 
 		if (!glfwInit())
 			return;
@@ -128,14 +133,42 @@ namespace engine {
 		GameLoop();
 	}
 
-	void GameWindow::SetWindowResizeCallback(void(* cbfunc)(GLFWwindow*, int, int)) const
+	void GameWindow::SetWindowResizeCallback(void(*cbfunc)(GLFWwindow*, int, int)) const
 	{
 		glfwSetWindowSizeCallback(m_window, cbfunc);
+	}
+
+	void GameWindow::SetCursorMode(int mode) const
+	{
+		glfwSetInputMode(m_window, GLFW_CURSOR, mode);
+	}
+
+	void GameWindow::SetRawMouseInput() const
+	{
+		if (glfwRawMouseMotionSupported())
+		{
+			if (glfwGetInputMode(m_window, GLFW_CURSOR) != GLFW_CURSOR_DISABLED)
+			{
+				glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			}
+			glfwSetInputMode(m_window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+		}
 	}
 
 	glm::vec2* GameWindow::GetInputAxis()
 	{
 		return &inputAxis;
+	}
+
+	void GameWindow::GetDeltaMousePos(double* dx, double* dy) const
+	{
+		*dx = m_delta_mouse_x;
+		*dy = m_delta_mouse_y;
+	}
+
+	void GameWindow::GetMousePosition(double* xpos, double* ypos) const
+	{
+		glfwGetCursorPos(m_window, xpos, ypos);
 	}
 
 	int GameWindow::GetMouseButtonState(int mousebtn) const
@@ -148,15 +181,15 @@ namespace engine {
 		glfwGetWindowSize(m_window, width, height);
 	}
 
-	 void GameWindow::SetKeyCallback(void(* cb_func)(int key, int scancode, int action, int mods))
-	 {
-	 	key_callback = cb_func;
-	 }
+	void GameWindow::SetKeyCallback(void(*cb_func)(int key, int scancode, int action, int mods))
+	{
+		key_callback = cb_func;
+	}
 
-	 void GameWindow::SetMouseClickCallback(void(* cb_func)(int button, int action, int mods))
-	 {
-		 mouse_callback = cb_func;
-	 }
+	void GameWindow::SetMouseClickCallback(void(*cb_func)(int button, int action, int mods))
+	{
+		mouse_callback = cb_func;
+	}
 
 	int GameWindow::GetKeyStatus(int key) const
 	{
@@ -170,15 +203,30 @@ namespace engine {
 
 	void GameWindow::GameLoop()
 	{
+		auto time = std::chrono::high_resolution_clock::now();
+		double mousex, mousey;
+		glfwGetCursorPos(m_window, &mousex, &mousey);
+
 		while (!glfwWindowShouldClose(m_window))
-		{	
+		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			Update();
-			m_game->Update();
+
+			double newMousex, newMousey;
+			glfwGetCursorPos(m_window, &newMousex, &newMousey);
+			m_delta_mouse_x = newMousex - mousex;
+			m_delta_mouse_y = newMousey - mousey;
+			mousex = newMousex;
+			mousey = newMousey;
+
+			std::chrono::duration<double> dtime = std::chrono::high_resolution_clock::now() - time;
+			time = std::chrono::high_resolution_clock::now();
+			m_delta_time = dtime.count();
+			m_update(m_delta_time);
+			m_game->Update(m_delta_time);
 			if (m_game->GetActiveScene())
 			{
 				m_game->RenderScene();
-			}			
+			}
 			glfwSwapBuffers(m_window);
 			//m_key_status.clear();
 			ComputeInputAxis();

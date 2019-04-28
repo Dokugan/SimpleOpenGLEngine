@@ -17,7 +17,7 @@ namespace engine {
 		GameObject(TransformComponent* transform);
 		virtual ~GameObject();
 
-		virtual void Update(){}
+		virtual void Update(double deltaTime){}
 
 		void AddComponent(Component* component);
 

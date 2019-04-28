@@ -39,13 +39,13 @@ namespace engine {
 		return m_activeScene;
 	}
 
-	void Game::Update()
+	void Game::Update(double deltaTime)
 	{
 		if (m_activeScene)
 		{
 			for (GameObject* obj : m_activeScene->GetObjects())
 			{
-				obj->Update();
+				obj->Update(deltaTime);
 			}
 		}
 	}

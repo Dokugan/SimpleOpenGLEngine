@@ -4,6 +4,6 @@
 class ChildGameObject : public engine::GameObject
 {
 public:
-	void Update() override;
+	void Update(double dt) override;
 	
 };

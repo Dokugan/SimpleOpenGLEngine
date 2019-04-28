@@ -3,16 +3,19 @@
 #include <windows.h>
 #include <iostream>
 #include "ChildGameObject.h"
+#include "engine/Input.h"
 
 engine::GameWindow* window;
 engine::CameraComponent* camera;
 
-void Update()
+void Update(double dt)
 {
-	if (camera)
-	{
-		
-	}
+	 double x, y;
+	// window->GetMousePosition(&x, &y);
+	// std::cout << x << ", " << y << '\n';
+	//std::cout << dt << '\n';
+	 window->GetDeltaMousePos(&x, &y);
+	std::cout << x << ", " << y << '\n';
 }
 
 void KeyboardEvent(int key, int scancode, int action, int mods)
@@ -37,6 +40,7 @@ int main(int argc, char* argv[])
 	GameObject* obj = new GameObject(new TransformComponent(glm::vec3(5.0f, 0.0f, 0.0f)));
 	obj->AddComponent(new MeshComponent("res/models/texturedcube.obj"));
 	mainScene->AddGameObject(obj);
-	//window->SetKeyCallback(&KeyboardEvent);
+	//window->SetCursorMode(CURSOR_DISABLED);
+	window->SetRawMouseInput();
 	std::cin.get();
 }
