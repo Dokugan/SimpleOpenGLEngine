@@ -4,6 +4,7 @@
 #include "../ext/glm/gtc/quaternion.hpp"
 #include "../ext/glm/gtx/matrix_decompose.hpp"
 #include "../ext/glm/gtx/quaternion.hpp"
+#include "../ext/glm/gtx/rotate_vector.hpp"
 
 
 namespace engine {
@@ -18,62 +19,95 @@ namespace engine {
 
 	TransformComponent::TransformComponent()
 	{
-		m_model_matrix = GetIdentityMatrix();
+		//m_model_matrix = GetIdentityMatrix();
+		m_rotation = glm::quat(1,0,0,0);
+		m_position = glm::vec3(0, 0, 0);
+		m_scale = glm::vec3(1, 1, 1);
 	}
 
 	TransformComponent::TransformComponent(glm::vec3 position)		
 	{
-		m_model_matrix = GetIdentityMatrix();
-		m_model_matrix = glm::translate(m_model_matrix, position);
+		m_position = position;
+		m_rotation = glm::quat(1, 0, 0, 0);
+		m_scale = glm::vec3(1, 1, 1);
+		//m_model_matrix = GetIdentityMatrix();
+		//m_model_matrix = glm::translate(m_model_matrix, position);
 	}
 
 	TransformComponent::TransformComponent(glm::vec3 position, glm::quat rotation)
 	{
-		m_model_matrix = GetIdentityMatrix();
-		m_model_matrix = glm::translate(m_model_matrix, position);
+		m_position = position;
+		m_rotation = rotation;
+		m_scale = glm::vec3(1, 1, 1);
+		//m_model_matrix = GetIdentityMatrix();
+		//m_model_matrix = glm::translate(m_model_matrix, position);
 		//m_model_matrix = Rotate()
 	}
 
-	glm::mat4 TransformComponent::GetModelMatrix() const { return m_model_matrix; }
+	glm::mat4 TransformComponent::GetModelMatrix() const
+	{
+		glm::mat4 translationMat = GetIdentityMatrix();
+		translationMat = glm::translate(translationMat, m_position);
+		// get rotation matrix from rotation
+		float angle = 2 * acos(m_rotation.w);
+		glm::mat4 rotationMat;
+		// when angle = 0 divide by 0 error occurs
+		if (angle != 0.f)
+		{
+			rotationMat = glm::rotate(GetIdentityMatrix(), angle, glm::vec3(
+				m_rotation.x / sqrt(1 - m_rotation.w * m_rotation.w),
+				m_rotation.y / sqrt(1 - m_rotation.w * m_rotation.w),
+				m_rotation.z / sqrt(1 - m_rotation.w * m_rotation.w)));
+		}
+		else { rotationMat = GetIdentityMatrix(); }
+
+		glm::mat4 modelMatrix = translationMat * rotationMat;
+		modelMatrix = glm::scale(modelMatrix, m_scale);
+		return modelMatrix;
+	}
 
 	glm::vec3 TransformComponent::GetPosition() const
 	{
-		glm::vec3 scale;
-		glm::quat rotation = glm::quat(0,0,0,0);
-		glm::vec3 translation;
-		glm::vec3 skew;
-		glm::vec4 perspective = glm::vec4(0);
-		glm::decompose(m_model_matrix, scale, rotation, translation, skew, perspective);
-		return translation;
+		return m_position;
+		// glm::vec3 scale;
+		// glm::quat rotation = glm::quat(0,0,0,0);
+		// glm::vec3 translation;
+		// glm::vec3 skew;
+		// glm::vec4 perspective = glm::vec4(0);
+		// glm::decompose(m_model_matrix, scale, rotation, translation, skew, perspective);
+		// return translation;
 	}
 
 	glm::quat TransformComponent::GetRotation() const
 	{
-		glm::vec3 scale;
-		glm::quat rotation = glm::quat(0, 0, 0, 0);
-		glm::vec3 translation;
-		glm::vec3 skew;
-		glm::vec4 perspective = glm::vec4(0);
-		glm::decompose(m_model_matrix, scale, rotation, translation, skew, perspective);
-		return rotation;
+		return m_rotation;
+		// glm::vec3 scale;
+		// glm::quat rotation = glm::quat(0, 0, 0, 0);
+		// glm::vec3 translation;
+		// glm::vec3 skew;
+		// glm::vec4 perspective = glm::vec4(0);
+		// glm::decompose(m_model_matrix, scale, rotation, translation, skew, perspective);
+		// return rotation;
 	}
 
 	void TransformComponent::Scale(glm::vec3 scale)
 	{
-		m_model_matrix = glm::scale(m_model_matrix, scale);
+		m_scale = scale;
+		//m_model_matrix = glm::scale(m_model_matrix, scale);
 	}
 
 	// void TransformComponent::Rotate(glm::quat rotation)
 	// {
 	// }
 
-	void TransformComponent::Rotate(glm::vec3 axis, float radians)
+	void TransformComponent::Rotate(glm::vec3 axis, float angle)
 	{
-		m_model_matrix = glm::rotate(m_model_matrix, radians, axis);
+		m_rotation = glm::rotate(m_rotation, angle, axis);
+		//m_model_matrix = glm::rotate(m_model_matrix, radians, axis);
 	}
 
 	void TransformComponent::Translate(glm::vec3 movement)
 	{
-		m_model_matrix = glm::translate(m_model_matrix, movement);
+		m_position += movement;
 	}
 }

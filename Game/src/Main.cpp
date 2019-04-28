@@ -16,6 +16,15 @@ void Update(double dt)
 	//std::cout << dt << '\n';
 	 window->GetDeltaMousePos(&x, &y);
 	std::cout << x << ", " << y << '\n';
+	if (camera)
+	{
+		if (window->GetKeyStatus(KEY_SPACE))
+		{
+			camera->GetTransform()->Translate(glm::vec3(0, 1, 0) * static_cast<float>(dt));
+		}
+		camera->GetTransform()->Rotate(glm::vec3(0, 1, 0), -x * dt);
+		camera->GetTransform()->Rotate(glm::vec3(0, 0, 1), -y * dt);
+	}
 }
 
 void KeyboardEvent(int key, int scancode, int action, int mods)

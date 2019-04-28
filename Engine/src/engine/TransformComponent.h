@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "../ext/glm/glm.hpp"
+#include "../ext/glm/gtc/quaternion.hpp"
 
 namespace engine {
 	glm::mat4 GetIdentityMatrix();
@@ -8,7 +9,10 @@ namespace engine {
 	class TransformComponent :
 		public Component
 	{
-		glm::mat4 m_model_matrix;
+		glm::vec3 m_position;
+		glm::quat m_rotation;
+		glm::vec3 m_scale;
+		//glm::mat4 m_model_matrix;
 
 	public:
 		TransformComponent();

@@ -105,11 +105,11 @@ namespace engine {
 
 	void GameWindow::SetupWindow()
 	{
-		int major;
-		int minor;
-		int rev;
-		glfwGetVersion(&major, &minor, &rev);
-		printf("%d.%d.%d", major, minor, rev);
+		// int major;
+		// int minor;
+		// int rev;
+		// glfwGetVersion(&major, &minor, &rev);
+		// printf("GLFW version: %d.%d.%d \n", major, minor, rev);
 
 		if (!glfwInit())
 			return;
