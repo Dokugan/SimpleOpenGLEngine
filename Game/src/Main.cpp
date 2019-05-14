@@ -22,8 +22,7 @@ void Update(double dt)
 		{
 			camera->GetTransform()->Translate(glm::vec3(0, 1, 0) * static_cast<float>(dt));
 		}
-		camera->GetTransform()->Rotate(glm::vec3(0, 1, 0), -x * dt);
-		camera->GetTransform()->Rotate(glm::vec3(0, 0, 1), -y * dt);
+		camera->GetTransform()->RotateEuler(glm::vec3(0, x * dt, y* dt));
 	}
 }
 

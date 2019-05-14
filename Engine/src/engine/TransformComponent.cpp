@@ -69,25 +69,11 @@ namespace engine {
 	glm::vec3 TransformComponent::GetPosition() const
 	{
 		return m_position;
-		// glm::vec3 scale;
-		// glm::quat rotation = glm::quat(0,0,0,0);
-		// glm::vec3 translation;
-		// glm::vec3 skew;
-		// glm::vec4 perspective = glm::vec4(0);
-		// glm::decompose(m_model_matrix, scale, rotation, translation, skew, perspective);
-		// return translation;
 	}
 
 	glm::quat TransformComponent::GetRotation() const
 	{
 		return m_rotation;
-		// glm::vec3 scale;
-		// glm::quat rotation = glm::quat(0, 0, 0, 0);
-		// glm::vec3 translation;
-		// glm::vec3 skew;
-		// glm::vec4 perspective = glm::vec4(0);
-		// glm::decompose(m_model_matrix, scale, rotation, translation, skew, perspective);
-		// return rotation;
 	}
 
 	void TransformComponent::Scale(glm::vec3 scale)
@@ -104,6 +90,35 @@ namespace engine {
 	{
 		m_rotation = glm::rotate(m_rotation, angle, axis);
 		//m_model_matrix = glm::rotate(m_model_matrix, radians, axis);
+	}
+
+	void TransformComponent::RotateEuler(glm::vec3 rotation)
+	{
+		glm::vec3 euler = glm::eulerAngles(m_rotation);
+		euler -= rotation;
+		glm::quat quat = glm::quat(euler);
+		m_rotation = quat;
+
+		// glm::mat4 matRoll = glm::mat4(1.0f);//identity matrix; 
+		// glm::mat4 matPitch = glm::mat4(1.0f);//identity matrix
+		// glm::mat4 matYaw = glm::mat4(1.0f);//identity matrix
+  //
+		// 								   //roll, pitch and yaw are used to store our angles in our class
+		// matRoll = glm::rotate(matRoll, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+		// matPitch = glm::rotate(matPitch, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+		// matYaw = glm::rotate(matYaw, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+  //
+		// //order matters
+		// glm::mat4 rotate = matRoll * matPitch * matYaw;
+  //
+		// glm::vec3 pos;
+		// glm::vec3 scale;
+		// glm::quat rot = glm::quat(0, 0, 0, 0);
+		// glm::vec3 skew;
+		// glm::vec4 perspective = glm::vec4(0);
+  //
+		// glm::decompose(rotate, scale, rot, pos, skew, perspective);
+		// m_rotation = rot;
 	}
 
 	void TransformComponent::Translate(glm::vec3 movement)

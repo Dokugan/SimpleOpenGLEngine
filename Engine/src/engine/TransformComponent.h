@@ -24,6 +24,7 @@ namespace engine {
 		glm::quat GetRotation() const;
 
 		void Rotate(glm::vec3 axis, float radians);
+		void RotateEuler(glm::vec3 rotation);
 		//void Rotate(glm::quat rotation);
 		void Scale(glm::vec3 scale);
 		void Translate(glm::vec3 movement);
