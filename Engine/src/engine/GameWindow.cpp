@@ -12,11 +12,22 @@ namespace engine {
 
 	static std::map<GLFWwindow*, GameWindow*> window_map;
 
-	GameWindow::GameWindow(const int windowWidth, const int windowHeight, const std::string& title, update_func updateFunc) :
-		m_windowWidth(windowWidth), m_windowHeight(windowHeight), m_update(updateFunc)
+	GameWindow::GameWindow(const std::string& title, update_func updateFunc, const int windowWidth, const int windowHeight) :
+		m_update(updateFunc), m_title(title)
 	{
 		m_game = new Game();
-		m_config = new Config();
+		if (windowWidth == 0)
+			m_windowWidth = GetSetting("windowWidth").at(0);
+		else
+			m_windowWidth = windowWidth;
+		if (windowHeight == 0)
+			m_windowHeight = GetSetting("windowHeight").at(0);
+		else
+			m_windowHeight = windowHeight;
+		m_inputAxisNegativeX = GetSetting("inputAxisNegativeX");
+		m_inputAxisPositiveX = GetSetting("inputAxisPositiveX");
+		m_inputAxisNegativeY = GetSetting("inputAxisNegativeY");
+		m_inputAxisPositiveY = GetSetting("inputAxisPositiveY");
 		m_gameThread = std::thread(&GameWindow::SetupWindow, this);
 	}
 
@@ -63,7 +74,7 @@ namespace engine {
 	{
 		glm::vec2 inputvec(0);
 		const auto end = m_key_status.end();
-		for (int i : m_config->AxisYPositive)
+		for (int i : m_inputAxisPositiveY)
 		{
 			auto it = m_key_status.find(i);
 			if (it != end && it->second != ACTION_RELEASE)
@@ -72,7 +83,7 @@ namespace engine {
 				break;
 			}
 		}
-		for (int i : m_config->AxisYNegative)
+		for (int i : m_inputAxisNegativeY)
 		{
 			auto it = m_key_status.find(i);
 			if (it != end && it->second != ACTION_RELEASE)
@@ -81,7 +92,7 @@ namespace engine {
 				break;
 			}
 		}
-		for (int i : m_config->AxisXPositive)
+		for (int i : m_inputAxisPositiveX)
 		{
 			auto it = m_key_status.find(i);
 			if (it != end && it->second != ACTION_RELEASE)
@@ -90,7 +101,7 @@ namespace engine {
 				break;
 			}
 		}
-		for (int i : m_config->AxisXNegative)
+		for (int i : m_inputAxisNegativeX)
 		{
 			auto it = m_key_status.find(i);
 			if (it != end && it->second != ACTION_RELEASE)

@@ -47,6 +47,12 @@ namespace engine
 			GlCall(glUniform1f(GetUniformLocation(name), v1));
 		}
 
+		void Shader::SetUniform3f(const std::string& name, float v0, float v1, float v2)
+		{
+			GlCall(glUseProgram(m_rendererId));
+			GlCall(glUniform3f(GetUniformLocation(name), v0, v1, v2));
+		}
+
 		void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3)
 		{
 			GlCall(glUseProgram(m_rendererId));

@@ -23,12 +23,16 @@ void main()
 
 in vec2 UV;
 
-out vec4 color;
+out vec4 colour;
 
 // Values that stay constant for the whole mesh.
 uniform sampler2D u_TextureSampler;
+uniform float u_AmbientIntensity;
+uniform vec3 u_AmbientColour;
 
 void main()
 {
-	color = texture(u_TextureSampler, UV);
+	vec4 texColour = texture(u_TextureSampler, UV);
+	vec3 ambient = u_AmbientColour * u_AmbientIntensity;
+	colour = texColour * vec4(ambient, 1.0);
 };

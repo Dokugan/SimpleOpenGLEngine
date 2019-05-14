@@ -45,6 +45,6 @@ namespace engine {
 			return nullptr;
 		}
 
-		void Render(const CameraComponent* camera);
+		void Render(const CameraComponent* camera, float ambientIntensity, glm::vec3 ambientColour);
 	};
 }

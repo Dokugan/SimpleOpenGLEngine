@@ -27,12 +27,12 @@ namespace engine {
 		m_components.push_back(component);
 	}
 
-	void GameObject::Render(const CameraComponent* camera)
+	void GameObject::Render(const CameraComponent* camera, float ambientIntensity, glm::vec3 ambientColour)
 	{
 		auto mesh = GetComponent<MeshComponent>();
 		if (mesh != nullptr)
 		{
-			mesh->Render(camera, this);
+			mesh->Render(camera, this, ambientIntensity, ambientColour);
 		}
 	}
 }

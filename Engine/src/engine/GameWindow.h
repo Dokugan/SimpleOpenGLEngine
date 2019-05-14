@@ -9,8 +9,6 @@
 typedef struct GLFWwindow GLFWwindow;
 
 namespace engine {
-	// class Game;
-	// class Config;
 	typedef struct
 	{
 		int key;
@@ -36,13 +34,14 @@ namespace engine {
 		int m_windowHeight;
 		GLFWwindow* m_window;
 		Game* m_game;
-		Config* m_config;
 		update_func m_update;
 		std::thread m_gameThread;
 		std::map<int, int> m_key_status;
 		std::map<int, int> m_mouse_status;
 		double m_delta_time;
 		double m_delta_mouse_x, m_delta_mouse_y;
+		std::vector<int>	m_inputAxisPositiveY, m_inputAxisNegativeY, 
+							m_inputAxisPositiveX, m_inputAxisNegativeX;
 
 		glm::vec2 inputAxis;
 
@@ -57,7 +56,7 @@ namespace engine {
 		key_cb_func key_callback = nullptr;
 		mouse_cb_func mouse_callback = nullptr;
 
-		GameWindow(int windowWidth, int windowHeight, const std::string& title, update_func updateFunc);
+		GameWindow(const std::string& title, update_func updateFunc, int windowWidth = 0, int windowHeight = 0);
 		~GameWindow();
 
 		void SetupWindow();

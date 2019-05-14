@@ -1,19 +1,8 @@
 #pragma once
 #include <vector>
+#include <string>
 
 namespace engine
 {
-	class Config
-	{
-	public:
-	 	int windowHeight, windowWidth;
-		std::vector<int> AxisXPositive, AxisXNegative, AxisYPositive, AxisYNegative;
-
-		Config();
-		Config(const std::string& path);
-
-		void ParseConfig(const std::string& path);
-
-		~Config();
-	};
+		std::vector<int> GetSetting(const std::string& name, const std::string& path = "../Engine/res/default.cfg");
 }

@@ -34,7 +34,7 @@ void KeyboardEvent(int key, int scancode, int action, int mods)
 int main(int argc, char* argv[])
 {
 	using namespace engine;
-	window = new GameWindow(1920, 1080, "TestWindow", Update);
+	window = new GameWindow("TestWindow", Update);
 	Game* game = window->GetGame();
 	Scene* mainScene = game->AddScene("Mainscene");
 	int width = 0, height = 0;

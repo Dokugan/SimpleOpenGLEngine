@@ -3,8 +3,8 @@
 
 
 namespace engine {
-	Scene::Scene(std::string id) :
-		m_id(std::move(id))
+	Scene::Scene(std::string id, float ambientIntensity, glm::vec3 ambientColour) :
+		m_id(std::move(id)), m_ambientIntensity(ambientIntensity), m_ambientColour(ambientColour)
 	{}
 
 
@@ -37,7 +37,7 @@ namespace engine {
 		{
 			if (m_mainCamera)
 			{
-				obj->Render(m_mainCamera);
+				obj->Render(m_mainCamera, m_ambientIntensity, m_ambientColour);
 			}			
 		}
 	}

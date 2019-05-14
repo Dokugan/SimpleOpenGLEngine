@@ -162,7 +162,7 @@ namespace engine
 		}
 	}
 
-	void MeshComponent::Render(const CameraComponent* camera, GameObject* obj)
+	void MeshComponent::Render(const CameraComponent* camera, GameObject* obj, float ambientIntensity, glm::vec3 ambientColour)
 	{
 		//Calculate Model view and projection matrices
 		glm::mat4 model = obj->GetComponent<TransformComponent>()->GetModelMatrix();
@@ -201,6 +201,8 @@ namespace engine
 		}
 
 		m_shader->SetUniformMat4f("u_MVP", mvp);
+		m_shader->SetUniform1f("u_AmbientIntensity", ambientIntensity);
+		m_shader->SetUniform3f("u_AmbientColour", ambientColour.x, ambientColour.y, ambientColour.z);
 
 		if (m_texture)
 		{

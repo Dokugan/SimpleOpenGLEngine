@@ -30,7 +30,7 @@ namespace engine {
 		MeshComponent(const std::string& modelFilePath);
 		~MeshComponent();
 
-		void Render(const CameraComponent* camera, GameObject* obj);
+		void Render(const CameraComponent* camera, GameObject* obj, float ambientIntensity, glm::vec3 ambientColour);
 
 	};
 
