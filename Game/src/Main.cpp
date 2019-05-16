@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 	camera = CameraComponent::PerspectiveCamera(new TransformComponent(glm::vec3(.0f, 0.f, .0f)), 45.0f, static_cast<float>(width), static_cast<float>(height), 200.0f, 0.1f);
 	mainScene->SetCamera(camera);
 	GameObject* obj = new GameObject(new TransformComponent(glm::vec3(5.0f, 0.0f, 0.0f)));
-	obj->AddComponent(new MeshComponent("res/models/texturedcube.obj"));
+	obj->AddComponent(new MeshComponent("res/models/baguette.obj"));
 	mainScene->AddGameObject(obj);
 	//window->SetCursorMode(CURSOR_DISABLED);
 	window->SetRawMouseInput();

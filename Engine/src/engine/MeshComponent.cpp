@@ -19,13 +19,27 @@ namespace engine
 	MeshComponent::MeshComponent()
 		= default;
 
-	MeshComponent::MeshComponent(const std::string& modelFilePath)
+	MeshComponent::MeshComponent(const std::string& modelFilePath, const std::string& shaderPath)
 	{
 		auto modelPath = std::experimental::filesystem::path(modelFilePath);
 		auto absoluteModelPath = std::experimental::filesystem::absolute(modelFilePath);
 		std::cout << "loading model: " << absoluteModelPath << std::endl;
 		//m_model = loadModelInMemory(absoluteModelPath.string(), absoluteModelPath.parent_path().string());
 		loadModel(absoluteModelPath.string(), absoluteModelPath.parent_path().string());
+		if (shaderPath.empty())
+		{
+			if (!m_texturePath.empty())
+			{
+				m_shader = new gl::Shader("res/shaders/TextureShader.glsl");
+			}
+			else
+			{
+				m_shader = new gl::Shader("res/shaders/Basic.glsl");
+			}
+		}
+		else {
+			m_shader = new gl::Shader(shaderPath);
+		}
 	}
 
 	MeshComponent::~MeshComponent()
@@ -186,16 +200,20 @@ namespace engine
 			}
 		}
 
+		if (!m_texturePath.empty())
+		{
+			m_shader->SetUniformArraySize("u_DirectionalLights", 0);
+		}
+		m_shader->SetUniformArraySize("u_DirectionalLights", 0);
+		m_shader->CreateShader();
 		if (!m_shader)
 		{
 			if (!m_texturePath.empty())
 			{
-				m_shader = new gl::Shader("res/shaders/TextureShader.glsl");
 				m_shader->SetUniform1i("u_TextureSampler", 0);
 			}
 			else
 			{
-				m_shader = new gl::Shader("res/shaders/Basic.glsl");
 				m_shader->SetUniform4f("u_Color", 1.0f, 0.0f, 0.0f, 1.0f);
 			}
 		}
@@ -203,6 +221,8 @@ namespace engine
 		m_shader->SetUniformMat4f("u_MVP", mvp);
 		m_shader->SetUniform1f("u_AmbientIntensity", ambientIntensity);
 		m_shader->SetUniform3f("u_AmbientColour", ambientColour.x, ambientColour.y, ambientColour.z);
+
+		
 
 		if (m_texture)
 		{

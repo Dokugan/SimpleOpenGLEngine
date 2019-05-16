@@ -22,12 +22,12 @@ namespace engine {
 		std::string m_texturePath;
 
 	private:
-		bool loadModelInMemory(const std::string& filePath, int* rCount, float* rVertices, int* rIndex);
+		//bool loadModelInMemory(const std::string& filePath, int* rCount, float* rVertices, int* rIndex);
 		void loadModel(const std::string& path, const std::string& mtlbasedir);
 
 	public:
 		MeshComponent();
-		MeshComponent(const std::string& modelFilePath);
+		MeshComponent(const std::string& modelFilePath, const std::string& shaderPath = "");
 		~MeshComponent();
 
 		void Render(const CameraComponent* camera, GameObject* obj, float ambientIntensity, glm::vec3 ambientColour);

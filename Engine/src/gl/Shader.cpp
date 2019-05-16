@@ -8,16 +8,92 @@
 #include <malloc.h>
 
 #include "Renderer.h"
+#include <iterator>
+#include <algorithm>
 
 namespace engine
 {
 	namespace gl
 	{
+		ShaderProgramSource::ShaderProgramSource()
+		= default;
+
+		ShaderProgramSource::~ShaderProgramSource()
+		= default;
+
+		void ShaderProgramSource::SetVertexSource(const std::string& source)
+		{
+			m_vertexSource = source;
+		}
+
+		void ShaderProgramSource::SetFragmentSource(const std::string& source)
+		{
+			m_fragmentSource = source;
+		}
+
+		std::string ShaderProgramSource::GetVertexSource() const
+		{
+			return m_vertexSource;
+		}
+
+		std::string ShaderProgramSource::GetFragmentSource() const
+		{
+			return m_fragmentSource;
+		}
+
+		void ShaderProgramSource::AddUniformArray(UniformArray array)
+		{
+			m_uniformArrays.push_back(array);
+		}
+
+		UniformArray* ShaderProgramSource::GetUniformArray(const std::string& name)
+		{
+			for (int i = 0; i < m_uniformArrays.size(); i++)
+			{
+				if (m_uniformArrays[i].name == name)
+				{
+					return &m_uniformArrays[i];
+				}
+			}
+			return nullptr;
+		}
+
+		std::vector<UniformArray> ShaderProgramSource::GetUniformArrayListVertex()
+		{
+			auto results = std::vector<UniformArray>();
+			for (auto uArray : m_uniformArrays)
+			{
+				if (uArray.shaderType == GL_VERTEX_SHADER)
+				{
+					results.push_back(uArray);
+				}
+			}
+			return results;
+		}
+
+		std::vector<UniformArray> ShaderProgramSource::GetUniformArrayListFragment()
+		{
+			auto results = std::vector<UniformArray>();
+			for (auto uArray : m_uniformArrays)
+			{
+				if (uArray.shaderType == GL_FRAGMENT_SHADER)
+				{
+					results.push_back(uArray);
+				}
+			}
+			return results;
+		}
+
+		std::vector<UniformArray>* ShaderProgramSource::GetUniformArrayList()
+		{
+			return &m_uniformArrays;
+		}
+
 		Shader::Shader(const std::string& filepath)
 			: m_filePath(filepath), m_rendererId(0)
 		{
-			ShaderProgramSource source = ParseShader(filepath);
-			m_rendererId = CreateShader(source.vertexSource, source.fragmentSource);
+			m_source = ParseShader(filepath);
+			//m_rendererId = CreateShader(source.GetVertexSource(), source.GetFragmentSource());
 		}
 
 		Shader::~Shader()
@@ -65,6 +141,16 @@ namespace engine
 			GlCall(glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
 		}
 
+		void Shader::SetUniformArraySize(std::string name, unsigned size)
+		{
+			UniformArray* uArray = m_source->GetUniformArray(name);
+			if (uArray->size != size)
+			{
+				uArray->size = size;
+				CreateShader();
+			}
+		}
+
 		int Shader::GetUniformLocation(const std::string& name)
 		{
 			if (m_uniformLocationCache.find(name) != m_uniformLocationCache.end())
@@ -76,8 +162,9 @@ namespace engine
 			return location;
 		}
 
-		ShaderProgramSource Shader::ParseShader(const std::string& filePath)
+		ShaderProgramSource* Shader::ParseShader(const std::string& filePath)
 		{
+			ShaderProgramSource* result = new ShaderProgramSource();
 			std::ifstream stream(filePath);
 
 			enum class ShaderType
@@ -85,13 +172,16 @@ namespace engine
 				NONE = -1, VERTEX = 0, FRAGMENT = 1
 			};
 
+			int lineNum = 0;
 			std::string line;
 			std::stringstream ss[2];
 			ShaderType type = ShaderType::NONE;
 			while (std::getline(stream, line))
 			{
+
 				if (line.find("#shader") != std::string::npos)
 				{
+					lineNum = 0;
 					if (line.find("vertex") != std::string::npos)
 						type = ShaderType::VERTEX;
 					else if (line.find("fragment") != std::string::npos)
@@ -101,15 +191,83 @@ namespace engine
 				{
 					ss[static_cast<int>(type)] << line << '\n';
 				}
+
+				if (line.find("uniform") != std::string::npos)
+				{
+					if (line.find('[') != std::string::npos && line.find(']') != std::string::npos)
+					{
+						std::istringstream iss(line);
+						std::vector<std::string> tokens{ std::istream_iterator<std::string>{iss},
+							std::istream_iterator<std::string>{} };
+						const int bracketOpenPos = tokens[2].find("[");
+						const int bracketClosedPos = tokens[2].find("]");
+						std::string name = tokens[2].substr(0, bracketOpenPos);
+						std::string dataType = tokens[1];
+						unsigned int size = std::stol(tokens[2].substr(bracketOpenPos + 1, bracketClosedPos - (bracketOpenPos + 1)));
+						unsigned int shaderType = 0;
+						if (type == ShaderType::VERTEX)
+							shaderType = GL_VERTEX_SHADER;
+						if (type == ShaderType::FRAGMENT)
+							shaderType = GL_FRAGMENT_SHADER;
+						result->AddUniformArray({ name, dataType, lineNum, shaderType, size });
+					}
+				}
+				lineNum++;
 			}
 
-			return { ss[0].str(), ss[1].str() };
+			result->SetVertexSource(ss[0].str());
+			result->SetFragmentSource(ss[1].str());
+			return result;
 		}
 
-		unsigned int Shader::CompileShader(unsigned int type, const std::string source)
+		unsigned int Shader::CompileShader(unsigned int type)
 		{
+			//apply uniform array changes
+			std::vector<UniformArray> list;
+			std::string source;
+			if (type == GL_VERTEX_SHADER)
+			{
+				source = m_source->GetVertexSource();
+				list = m_source->GetUniformArrayListVertex();
+			}
+			else if (type == GL_FRAGMENT_SHADER)
+			{
+				source = m_source->GetFragmentSource();
+				list = m_source->GetUniformArrayListFragment();
+			}
+			else { list = std::vector<UniformArray>(); }
+			std::stringstream stream(source);
+			int lineNum = 1;
+			std::string line;
+			std::string newSource;
+
+
+			if (!list.empty())
+			{
+				for (UniformArray uniform : list)
+				{
+					while (std::getline(stream, line))
+					{
+						if (uniform.lineNum == lineNum && type == uniform.shaderType)
+						{
+							if (uniform.size > 0)
+							{
+								line = "uniform " + uniform.type + " " + uniform.name + "[" + std::to_string(uniform.size) + "]";
+							}
+							else line = "";
+						}
+						newSource += line + '\n';
+						lineNum++;
+					}
+				}
+			}
+			else
+			{
+				newSource = source;
+			}
+			
 			GlCall(unsigned int id = glCreateShader(type));
-			const char* src = source.c_str();
+			const char* src = newSource.c_str();
 			GlCall(glShaderSource(id, 1, &src, nullptr));
 			GlCall(glCompileShader(id));
 
@@ -131,12 +289,17 @@ namespace engine
 			return id;
 		}
 
-		unsigned int Shader::CreateShader(const std::string vertexShader, const std::string fragmentShader)
+		ShaderProgramSource* Shader::GetSource()
+		{
+			return m_source;
+		}
+
+		void Shader::CreateShader()
 		{
 
 			GlCall(auto program = glCreateProgram());
-			unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
-			unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+			unsigned int vs = CompileShader(GL_VERTEX_SHADER);
+			unsigned int fs = CompileShader(GL_FRAGMENT_SHADER);
 
 			GlCall(glAttachShader(program, vs));
 			GlCall(glAttachShader(program, fs));
@@ -146,7 +309,7 @@ namespace engine
 			GlCall(glDeleteShader(vs));
 			GlCall(glDeleteShader(fs));
 
-			return program;
+			m_rendererId = program;
 		}
 	}
 }
