@@ -13,6 +13,14 @@ namespace engine {
 		class Shader;
 	}
 
+	struct Material
+	{
+		std::string diffuse_texture;
+		glm::vec3 diffuse;
+		glm::vec3 specular;
+		float shininess;
+	};
+
 	class GameObject;
 	class CameraComponent;
 	class LightSource;
@@ -26,7 +34,8 @@ namespace engine {
 		unsigned int m_indicesCount = 0;
 		gl::Texture* m_texture = nullptr;
 		gl::Shader* m_shader = nullptr;
-		std::string m_texturePath;
+		
+		Material m_mtl;
 
 	private:
 		//bool loadModelInMemory(const std::string& filePath, int* rCount, float* rVertices, int* rIndex);

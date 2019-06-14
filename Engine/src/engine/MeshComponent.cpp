@@ -32,7 +32,7 @@ namespace engine
 		loadModel(absoluteModelPath.string(), absoluteModelPath.parent_path().string());
 		if (shaderPaths.empty())
 		{
-			if (!m_texturePath.empty())
+			if (!m_mtl.diffuse_texture.empty())
 			{
 				m_shader = new gl::Shader(std::vector<std::string>({"res/shaders/TextureShader_fs.glsl", "res/shaders/TextureShader_vs.glsl" }));
 			}
@@ -175,7 +175,10 @@ namespace engine
 
 		if (!materials.empty())
 		{
-			m_texturePath = basedir + "\\" + materials[0].diffuse_texname;
+			m_mtl.diffuse_texture = basedir + "\\" + materials[0].diffuse_texname;
+			m_mtl.diffuse = glm::vec3(materials[0].diffuse[0], materials[0].diffuse[1], materials[0].diffuse[2]);
+			m_mtl.specular = glm::vec3(materials[0].specular[0], materials[0].specular[1], materials[0].specular[2]);
+			m_mtl.shininess = materials[0].shininess;
 			//TODO more textures per model
 		}
 	}
@@ -197,14 +200,14 @@ namespace engine
 
 		if (!m_texture)
 		{
-			if (!m_texturePath.empty())
+			if (!m_mtl.diffuse_texture.empty())
 			{
-				m_texture = new gl::Texture(m_texturePath);
+				m_texture = new gl::Texture(m_mtl.diffuse_texture);
 				//TODO more textures per model
 			}
 		}
 
-		if (!m_texturePath.empty())
+		if (!m_mtl.diffuse_texture.empty())
 		{
 			m_shader->SetUniformArraySize("u_DirectionalLights", lights->directionalLights.size());
 		}
@@ -212,7 +215,7 @@ namespace engine
 		m_shader->CreateShader();
 		if (!m_shader)
 		{
-			if (!m_texturePath.empty())
+			if (!m_mtl.diffuse_texture.empty())
 			{
 				m_shader->SetUniform1i("u_TextureSampler", 0);
 			}
@@ -235,6 +238,9 @@ namespace engine
 			m_shader->SetUniformVec3("u_DirectionalLights[" + std::to_string(i) + "].specular", l.m_specular);
 		}
 
+		m_shader->SetUniform3f("u_Material.diffuse", m_mtl.diffuse.x, m_mtl.diffuse.y, m_mtl.diffuse.z);
+		m_shader->SetUniform3f("u_Material.specular", m_mtl.specular.x, m_mtl.specular.y, m_mtl.specular.z);
+		m_shader->SetUniform1f("u_Material.shininess", m_mtl.shininess);
 		m_shader->SetUniformMat4f("u_Model", model);
 		m_shader->SetUniformMat4f("u_MVP", mvp);
 		m_shader->SetUniform1f("u_AmbientIntensity", ambientIntensity);
