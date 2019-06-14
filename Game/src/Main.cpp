@@ -4,6 +4,8 @@
 #include <iostream>
 #include "ChildGameObject.h"
 #include "engine/Input.h"
+#include "engine/CameraComponent.h"
+#include "engine/DirectionalLight.h"
 
 engine::GameWindow* window;
 engine::CameraComponent* camera;
@@ -22,7 +24,27 @@ void Update(double dt)
 		{
 			camera->GetTransform()->Translate(glm::vec3(0, 1, 0) * static_cast<float>(dt));
 		}
-		camera->GetTransform()->RotateEuler(glm::vec3(0, x * dt, y* dt));
+		if (window->GetKeyStatus(KEY_LEFT_CONTROL))
+		{
+			camera->GetTransform()->Translate(glm::vec3(0, -1, 0) * static_cast<float>(dt));
+		}
+		if (window->GetKeyStatus(KEY_D))
+		{
+			camera->GetTransform()->Translate(glm::vec3(0, 0, 1) * static_cast<float>(dt));
+		}
+		if (window->GetKeyStatus(KEY_A))
+		{
+			camera->GetTransform()->Translate(glm::vec3(0, 0, -1) * static_cast<float>(dt));
+		}
+		if (window->GetKeyStatus(KEY_W))
+		{
+			camera->GetTransform()->Translate(glm::vec3(1, 0, 0) * static_cast<float>(dt));
+		}
+		if (window->GetKeyStatus(KEY_S))
+		{
+			camera->GetTransform()->Translate(glm::vec3(-1, 0, 0) * static_cast<float>(dt));
+		}
+		camera->GetTransform()->RotateEuler(glm::vec3(0, x*.5 * dt, y*.5 * dt));
 	}
 }
 
@@ -45,9 +67,15 @@ int main(int argc, char* argv[])
 	window->GetWindowSize(&width, &height);
 	camera = CameraComponent::PerspectiveCamera(new TransformComponent(glm::vec3(.0f, 0.f, .0f)), 45.0f, static_cast<float>(width), static_cast<float>(height), 200.0f, 0.1f);
 	mainScene->SetCamera(camera);
-	GameObject* obj = new GameObject(new TransformComponent(glm::vec3(5.0f, 0.0f, 0.0f)));
-	obj->AddComponent(new MeshComponent("res/models/baguette.obj"));
+	GameObject obj = GameObject(new TransformComponent(glm::vec3(5.0f, 0.0f, 0.0f)));
+	auto mesh = new MeshComponent("res/models/texturedcube.obj");
+	obj.AddComponent(mesh);
 	mainScene->AddGameObject(obj);
+	mainScene->AddDirectionalLight(DirectionalLight(
+		glm::vec3(.5f, 1.f, 0.7f),
+		glm::vec3(.6f, .6f, .6f),
+		glm::vec3(1.f, 1.f, 1.f)
+	));
 	//window->SetCursorMode(CURSOR_DISABLED);
 	window->SetRawMouseInput();
 	std::cin.get();

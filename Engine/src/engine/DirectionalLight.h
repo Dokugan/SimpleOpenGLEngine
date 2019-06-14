@@ -3,12 +3,12 @@
 #include "../ext/glm/glm.hpp"
 
 namespace engine {
-	class DirectionalLight :
-		public LightSource
+	class DirectionalLight : public LightSource
 	{
-		glm::vec3 m_direction;
 	public:
-		DirectionalLight();
+		glm::vec3 m_direction;
+
+		DirectionalLight(glm::vec3 direction, glm::vec3 diffuse, glm::vec3 specular);
 		~DirectionalLight();
 	};
 }

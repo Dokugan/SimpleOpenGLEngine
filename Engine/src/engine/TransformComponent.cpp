@@ -98,27 +98,6 @@ namespace engine {
 		euler -= rotation;
 		glm::quat quat = glm::quat(euler);
 		m_rotation = quat;
-
-		// glm::mat4 matRoll = glm::mat4(1.0f);//identity matrix; 
-		// glm::mat4 matPitch = glm::mat4(1.0f);//identity matrix
-		// glm::mat4 matYaw = glm::mat4(1.0f);//identity matrix
-  //
-		// 								   //roll, pitch and yaw are used to store our angles in our class
-		// matRoll = glm::rotate(matRoll, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-		// matPitch = glm::rotate(matPitch, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-		// matYaw = glm::rotate(matYaw, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-  //
-		// //order matters
-		// glm::mat4 rotate = matRoll * matPitch * matYaw;
-  //
-		// glm::vec3 pos;
-		// glm::vec3 scale;
-		// glm::quat rot = glm::quat(0, 0, 0, 0);
-		// glm::vec3 skew;
-		// glm::vec4 perspective = glm::vec4(0);
-  //
-		// glm::decompose(rotate, scale, rot, pos, skew, perspective);
-		// m_rotation = rot;
 	}
 
 	void TransformComponent::Translate(glm::vec3 movement)

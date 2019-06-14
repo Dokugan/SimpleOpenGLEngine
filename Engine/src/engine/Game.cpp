@@ -43,8 +43,10 @@ namespace engine {
 	{
 		if (m_activeScene)
 		{
-			for (GameObject* obj : m_activeScene->GetObjects())
+			auto objVec = m_activeScene->GetObjects();
+			for (auto it = objVec->begin(); it != objVec->end(); ++it)
 			{
+				GameObject* obj = &(*it);
 				obj->Update(deltaTime);
 			}
 		}

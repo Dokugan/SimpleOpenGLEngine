@@ -12,33 +12,37 @@
 #include "../ext/tiny_obj_loader.h"
 #include "../ext/glm/gtx/transform.hpp"
 #include "../gl/Texture.h"
-
+#include "LightSource.h"
+#include "CameraComponent.h"
+#include "TransformComponent.h"
+#include "GameObject.h"
+#include "DirectionalLight.h"
 
 namespace engine
 {
 	MeshComponent::MeshComponent()
 		= default;
 
-	MeshComponent::MeshComponent(const std::string& modelFilePath, const std::string& shaderPath)
+	MeshComponent::MeshComponent(const std::string& modelFilePath, const std::vector<std::string> shaderPaths)
 	{
 		auto modelPath = std::experimental::filesystem::path(modelFilePath);
 		auto absoluteModelPath = std::experimental::filesystem::absolute(modelFilePath);
 		std::cout << "loading model: " << absoluteModelPath << std::endl;
 		//m_model = loadModelInMemory(absoluteModelPath.string(), absoluteModelPath.parent_path().string());
 		loadModel(absoluteModelPath.string(), absoluteModelPath.parent_path().string());
-		if (shaderPath.empty())
+		if (shaderPaths.empty())
 		{
 			if (!m_texturePath.empty())
 			{
-				m_shader = new gl::Shader("res/shaders/TextureShader.glsl");
+				m_shader = new gl::Shader(std::vector<std::string>({"res/shaders/TextureShader_fs.glsl", "res/shaders/TextureShader_vs.glsl" }));
 			}
 			else
 			{
-				m_shader = new gl::Shader("res/shaders/Basic.glsl");
+				m_shader = new gl::Shader(std::vector<std::string>({ "res/shaders/basic.glsl"}));
 			}
 		}
 		else {
-			m_shader = new gl::Shader(shaderPath);
+			m_shader = new gl::Shader(shaderPaths);
 		}
 	}
 
@@ -176,10 +180,10 @@ namespace engine
 		}
 	}
 
-	void MeshComponent::Render(const CameraComponent* camera, GameObject* obj, float ambientIntensity, glm::vec3 ambientColour)
+	void MeshComponent::Render(const CameraComponent* camera, LightSources* lights, float ambientIntensity, glm::vec3 ambientColour)
 	{
 		//Calculate Model view and projection matrices
-		glm::mat4 model = obj->GetComponent<TransformComponent>()->GetModelMatrix();
+		glm::mat4 model = m_parent->GetComponent<TransformComponent>()->GetModelMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(camera->GetFov()), camera->GetWidth() / camera->GetHeight(),
 			camera->GetNear(), camera->GetFar());
 		glm::mat4 view = camera->GetView();
@@ -202,9 +206,9 @@ namespace engine
 
 		if (!m_texturePath.empty())
 		{
-			m_shader->SetUniformArraySize("u_DirectionalLights", 0);
+			m_shader->SetUniformArraySize("u_DirectionalLights", lights->directionalLights.size());
 		}
-		m_shader->SetUniformArraySize("u_DirectionalLights", 0);
+		//m_shader->SetUniformArraySize("u_DirectionalLights", 0);
 		m_shader->CreateShader();
 		if (!m_shader)
 		{
@@ -218,6 +222,20 @@ namespace engine
 			}
 		}
 
+		m_shader->SetUniform3f("u_ViewPos", camera->GetTransform()->GetPosition().x,
+			camera->GetTransform()->GetPosition().y,
+			camera->GetTransform()->GetPosition().z);
+		m_shader->SetUniform1i("u_NumDirLights", lights->directionalLights.size());
+
+		for (int i = 0; i < lights->directionalLights.size(); i++)
+		{
+			DirectionalLight& l = lights->directionalLights.at(i);
+			m_shader->SetUniformVec3("u_DirectionalLights[" + std::to_string(i) + "].direction", l.m_direction);
+			m_shader->SetUniformVec3("u_DirectionalLights[" + std::to_string(i) + "].diffuse", l.m_diffuse);
+			m_shader->SetUniformVec3("u_DirectionalLights[" + std::to_string(i) + "].specular", l.m_specular);
+		}
+
+		m_shader->SetUniformMat4f("u_Model", model);
 		m_shader->SetUniformMat4f("u_MVP", mvp);
 		m_shader->SetUniform1f("u_AmbientIntensity", ambientIntensity);
 		m_shader->SetUniform3f("u_AmbientColour", ambientColour.x, ambientColour.y, ambientColour.z);

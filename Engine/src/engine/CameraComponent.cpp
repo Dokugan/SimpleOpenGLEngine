@@ -1,7 +1,8 @@
 #include "CameraComponent.h"
+#include "GameObject.h"
 #include "../ext/glm/gtc/matrix_transform.hpp"
 #include "../ext/glm/gtx/quaternion.hpp"
-#include "../ext/glm/gtx/matrix_decompose.inl"
+#include "../ext/glm/gtx/matrix_decompose.hpp"
 
 namespace engine
 {
@@ -36,6 +37,24 @@ namespace engine
 		m_perspective(false), m_projection(glm::ortho(0.0f, width, 0.0f, height, near, far)),
 		m_view(glm::lookAt(m_transform->GetPosition(), glm::vec3(0.0f), glm::vec3(0, 1, 0)))
 	{
+	}
+
+	CameraComponent* CameraComponent::PerspectiveCamera(TransformComponent* transform, const float fov, const float width, const float height, const float far, const float near)
+	{
+		return new CameraComponent(transform, fov, width, height, far, near);
+	}
+	CameraComponent* CameraComponent::PerspectiveCamera(const float fov, const float width, const float height, const float far, const float near)
+	{
+		return new CameraComponent(fov, width, height, far, near);
+	}
+
+	CameraComponent* CameraComponent::OrthographicCamera(TransformComponent* transform, const float width, const float height, const float far, const float near)
+	{
+		return new CameraComponent(transform, width, height, far, near);
+	}
+	CameraComponent* CameraComponent::OrthographicCamera(const float width, const float height, const float far, const float near)
+	{
+		return new CameraComponent(width, height, far, near);
 	}
 
 	CameraComponent::~CameraComponent()
@@ -95,8 +114,8 @@ namespace engine
 		return glm::lookAt(m_transform->GetPosition(), lookat, up);;
 	}
 
-	void CameraComponent::LookAt(glm::vec3 lookAt)
-	{
-		m_lookat = lookAt;
-	}
+	//void CameraComponent::LookAt(glm::vec3 lookAt)
+	//{
+	//	m_lookat = lookAt;
+	//}
 }

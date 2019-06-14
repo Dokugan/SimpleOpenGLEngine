@@ -2,11 +2,15 @@
 #include <vector>
 #include <typeinfo>
 #include <iostream>
-#include "Component.h"
-#include "TransformComponent.h"
-#include "CameraComponent.h"
+#include "../ext/glm/glm.hpp"
 
 namespace engine {
+
+	struct LightSources;
+	class LightSource;
+	class Component;
+	class TransformComponent;
+	class CameraComponent;
 
 	class GameObject
 	{
@@ -34,7 +38,7 @@ namespace engine {
 					{
 						continue;
 					}
-					return comp;
+					return *(&comp);
 
 				}
 				catch (std::bad_cast bc)
@@ -45,6 +49,6 @@ namespace engine {
 			return nullptr;
 		}
 
-		void Render(const CameraComponent* camera, float ambientIntensity, glm::vec3 ambientColour);
+		void Render(const CameraComponent* camera, LightSources* lights, float ambientIntensity, glm::vec3 ambientColour);
 	};
 }

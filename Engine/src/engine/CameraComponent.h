@@ -1,6 +1,6 @@
 #pragma once
+#include "Component.h"
 #include "TransformComponent.h"
-
 namespace engine
 {
 	class CameraComponent : public Component
@@ -14,7 +14,7 @@ namespace engine
 		bool m_perspective;
 		glm::mat4 m_projection;
 		glm::mat4 m_view;
-		glm::vec3 m_lookat;
+		//glm::vec3 m_lookat;
 
 	private:
 
@@ -26,23 +26,11 @@ namespace engine
 
 	public:
 
-		static CameraComponent* PerspectiveCamera(TransformComponent* transform, const float fov, const float width, const float height, const float far, const float near)
-		{
-			return new CameraComponent(transform, fov, width, height, far, near);
-		}
-		static CameraComponent* PerspectiveCamera(const float fov, const float width, const float height, const float far, const float near)
-		{
-			return new CameraComponent(fov, width, height, far, near);
-		}
+		static CameraComponent* PerspectiveCamera(TransformComponent* transform, const float fov, const float width, const float height, const float far, const float near);
+		static CameraComponent* PerspectiveCamera(const float fov, const float width, const float height, const float far, const float near);
 
-		static CameraComponent* OrthographicCamera(TransformComponent* transform, const float width, const float height, const float far, const float near)
-		{
-			return new CameraComponent(transform, width, height, far, near);
-		}
-		static CameraComponent* OrthographicCamera(const float width, const float height, const float far, const float near)
-		{
-			return new CameraComponent(width, height, far, near);
-		}
+		static CameraComponent* OrthographicCamera(TransformComponent* transform, const float width, const float height, const float far, const float near);
+		static CameraComponent* OrthographicCamera(const float width, const float height, const float far, const float near);
 
 		~CameraComponent();
 
@@ -57,7 +45,7 @@ namespace engine
 		glm::mat4 GetProjection() const;
 		glm::mat4 GetView() const;
 
-		void LookAt(glm::vec3 lookAt);
+		//void LookAt(glm::vec3 lookAt);
 	};
 }
 

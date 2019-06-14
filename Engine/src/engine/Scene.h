@@ -5,12 +5,17 @@
 #include "LightSource.h"
 
 namespace engine {
+
+	class DirectionalLight;
+	class CameraComponent;
+	class GameObject;
+
 	class Scene
 	{
 		std::string m_id;
 		CameraComponent* m_mainCamera;
-		std::vector<GameObject*> m_objects;
-		std::vector<LightSource*> m_lightSources;
+		std::vector<GameObject> m_objects;
+		LightSources m_lightSources;
 		float m_ambientIntensity;
 		glm::vec3 m_ambientColour;
 
@@ -20,12 +25,13 @@ namespace engine {
 		~Scene();
 
 		void  SetCamera(CameraComponent* camera);
-		CameraComponent* GetCamera() { return m_mainCamera; }
+		CameraComponent* GetCamera() const;
 		const std::string& GetId() const;
-		void AddGameObject(GameObject* obj);
-		void AddLightSource(LightSource* lsrc);
-		std::vector<GameObject*> GetObjects() { return m_objects; }
+		void AddGameObject(const GameObject& obj);
+		void AddDirectionalLight(const DirectionalLight& lsrc);
+		std::vector<GameObject>* GetObjects();
 
 		void RenderScene();
 	};
+
 }

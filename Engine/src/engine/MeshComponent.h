@@ -1,6 +1,9 @@
 #pragma once
 #include "Component.h"
-#include "GameObject.h"
+#include <string>
+#include <vector>
+#include "../ext/glm/glm.hpp"
+#include "LightSource.h"
 
 namespace engine {
 
@@ -9,6 +12,10 @@ namespace engine {
 		class Texture;
 		class Shader;
 	}
+
+	class GameObject;
+	class CameraComponent;
+	class LightSource;
 
 	class MeshComponent :
 		public Component
@@ -27,10 +34,10 @@ namespace engine {
 
 	public:
 		MeshComponent();
-		MeshComponent(const std::string& modelFilePath, const std::string& shaderPath = "");
+		MeshComponent(const std::string& modelFilePath, const std::vector<std::string> shaderPaths = std::vector<std::string>());
 		~MeshComponent();
 
-		void Render(const CameraComponent* camera, GameObject* obj, float ambientIntensity, glm::vec3 ambientColour);
+		void Render(const CameraComponent* camera, LightSources* lights, float ambientIntensity, glm::vec3 ambientColour);
 
 	};
 

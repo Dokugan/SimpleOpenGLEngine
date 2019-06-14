@@ -10,6 +10,7 @@
 #include "Renderer.h"
 #include <iterator>
 #include <algorithm>
+#include <utility>
 
 namespace engine
 {
@@ -21,28 +22,23 @@ namespace engine
 		ShaderProgramSource::~ShaderProgramSource()
 		= default;
 
-		void ShaderProgramSource::SetVertexSource(const std::string& source)
-		{
+		void ShaderProgramSource::SetVertexSource(const std::string& source) {
 			m_vertexSource = source;
 		}
 
-		void ShaderProgramSource::SetFragmentSource(const std::string& source)
-		{
+		void ShaderProgramSource::SetFragmentSource(const std::string& source) {
 			m_fragmentSource = source;
 		}
 
-		std::string ShaderProgramSource::GetVertexSource() const
-		{
+		std::string ShaderProgramSource::GetVertexSource() const {
 			return m_vertexSource;
 		}
 
-		std::string ShaderProgramSource::GetFragmentSource() const
-		{
+		std::string ShaderProgramSource::GetFragmentSource() const {
 			return m_fragmentSource;
 		}
 
-		void ShaderProgramSource::AddUniformArray(UniformArray array)
-		{
+		void ShaderProgramSource::AddUniformArray(UniformArray array) {
 			m_uniformArrays.push_back(array);
 		}
 
@@ -89,16 +85,19 @@ namespace engine
 			return &m_uniformArrays;
 		}
 
-		Shader::Shader(const std::string& filepath)
-			: m_filePath(filepath), m_rendererId(0)
+		Shader::Shader(std::vector<std::string> sourcePaths)
+			: m_rendererId(0)
 		{
-			m_source = ParseShader(filepath);
+			m_shaderPaths = new std::vector<std::string>(std::move(sourcePaths));
+			m_source = ParseShader(m_shaderPaths);
 			//m_rendererId = CreateShader(source.GetVertexSource(), source.GetFragmentSource());
 		}
 
 		Shader::~Shader()
 		{
 			GlCall(glDeleteProgram(m_rendererId));
+			delete m_shaderPaths;
+			delete m_source;
 		}
 
 		void Shader::Bind() const
@@ -127,6 +126,12 @@ namespace engine
 		{
 			GlCall(glUseProgram(m_rendererId));
 			GlCall(glUniform3f(GetUniformLocation(name), v0, v1, v2));
+		}
+
+		void Shader::SetUniformVec3(const std::string& name, glm::vec3 v0)
+		{
+			GlCall(glUseProgram(m_rendererId))
+			GlCall(glUniform3f(GetUniformLocation(name), v0.x, v0.y, v0.z));
 		}
 
 		void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3)
@@ -162,57 +167,60 @@ namespace engine
 			return location;
 		}
 
-		ShaderProgramSource* Shader::ParseShader(const std::string& filePath)
+		ShaderProgramSource* Shader::ParseShader(std::vector<std::string>* sourcePaths)
 		{
 			ShaderProgramSource* result = new ShaderProgramSource();
-			std::ifstream stream(filePath);
+			std::stringstream ss[2];
 
 			enum class ShaderType
 			{
 				NONE = -1, VERTEX = 0, FRAGMENT = 1
 			};
 
-			int lineNum = 0;
-			std::string line;
-			std::stringstream ss[2];
-			ShaderType type = ShaderType::NONE;
-			while (std::getline(stream, line))
-			{
+			for (const std::string& path : *sourcePaths) {
+				std::ifstream stream(path);
 
-				if (line.find("#shader") != std::string::npos)
+				int lineNum = 0;
+				std::string line;
+				ShaderType type = ShaderType::NONE;
+				while (std::getline(stream, line))
 				{
-					lineNum = 0;
-					if (line.find("vertex") != std::string::npos)
-						type = ShaderType::VERTEX;
-					else if (line.find("fragment") != std::string::npos)
-						type = ShaderType::FRAGMENT;
-				}
-				else
-				{
-					ss[static_cast<int>(type)] << line << '\n';
-				}
 
-				if (line.find("uniform") != std::string::npos)
-				{
-					if (line.find('[') != std::string::npos && line.find(']') != std::string::npos)
+					if (line.find("//shader") != std::string::npos)
 					{
-						std::istringstream iss(line);
-						std::vector<std::string> tokens{ std::istream_iterator<std::string>{iss},
-							std::istream_iterator<std::string>{} };
-						const int bracketOpenPos = tokens[2].find("[");
-						const int bracketClosedPos = tokens[2].find("]");
-						std::string name = tokens[2].substr(0, bracketOpenPos);
-						std::string dataType = tokens[1];
-						unsigned int size = std::stol(tokens[2].substr(bracketOpenPos + 1, bracketClosedPos - (bracketOpenPos + 1)));
-						unsigned int shaderType = 0;
-						if (type == ShaderType::VERTEX)
-							shaderType = GL_VERTEX_SHADER;
-						if (type == ShaderType::FRAGMENT)
-							shaderType = GL_FRAGMENT_SHADER;
-						result->AddUniformArray({ name, dataType, lineNum, shaderType, size });
+						lineNum = 0;
+						if (line.find("vertex") != std::string::npos)
+							type = ShaderType::VERTEX;
+						else if (line.find("fragment") != std::string::npos)
+							type = ShaderType::FRAGMENT;
 					}
+					else
+					{
+						ss[static_cast<int>(type)] << line << '\n';
+					}
+
+					if (line.find("uniform") != std::string::npos)
+					{
+						if (line.find('[') != std::string::npos && line.find(']') != std::string::npos)
+						{
+							std::istringstream iss(line);
+							std::vector<std::string> tokens{ std::istream_iterator<std::string>{iss},
+								std::istream_iterator<std::string>{} };
+							const int bracketOpenPos = tokens[2].find("[");
+							const int bracketClosedPos = tokens[2].find("]");
+							std::string name = tokens[2].substr(0, bracketOpenPos);
+							std::string dataType = tokens[1];
+							unsigned int size = std::stol(tokens[2].substr(bracketOpenPos + 1, bracketClosedPos - (bracketOpenPos + 1)));
+							unsigned int shaderType = 0;
+							if (type == ShaderType::VERTEX)
+								shaderType = GL_VERTEX_SHADER;
+							if (type == ShaderType::FRAGMENT)
+								shaderType = GL_FRAGMENT_SHADER;
+							result->AddUniformArray({ name, dataType, lineNum, shaderType, size });
+						}
+					}
+					lineNum++;
 				}
-				lineNum++;
 			}
 
 			result->SetVertexSource(ss[0].str());
@@ -250,11 +258,9 @@ namespace engine
 					{
 						if (uniform.lineNum == lineNum && type == uniform.shaderType)
 						{
-							if (uniform.size > 0)
-							{
-								line = "uniform " + uniform.type + " " + uniform.name + "[" + std::to_string(uniform.size) + "]";
-							}
-							else line = "";
+							if (uniform.size < 1)
+								uniform.size = 1;
+							line = "uniform " + uniform.type + " " + uniform.name + "[" + std::to_string(uniform.size) + "];";
 						}
 						newSource += line + '\n';
 						lineNum++;

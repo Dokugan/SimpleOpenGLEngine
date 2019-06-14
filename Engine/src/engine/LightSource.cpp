@@ -4,4 +4,7 @@ namespace engine {
 	LightSource::LightSource()
 	{
 	}
+
+	LightSource::~LightSource()
+		= default;
 }

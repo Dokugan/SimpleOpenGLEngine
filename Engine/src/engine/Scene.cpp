@@ -1,4 +1,6 @@
 #include "Scene.h"
+#include "DirectionalLight.h"
+
 //#include <utility>
 
 
@@ -16,28 +18,38 @@ namespace engine {
 		m_mainCamera = camera;
 	}
 
+	CameraComponent* Scene::GetCamera() const
+	{
+		return m_mainCamera;
+	}
+
+	std::vector<GameObject>* Scene::GetObjects()
+	{
+		return &m_objects;
+	}
+
 	const std::string& Scene::GetId() const
 	{
 		return m_id;
 	}
 
-	void Scene::AddGameObject(GameObject* obj)
+	void Scene::AddGameObject(const GameObject& obj)
 	{
 		m_objects.push_back(obj);
 	}
 
-	void Scene::AddLightSource(LightSource* lsrc)
+	void Scene::AddDirectionalLight(const DirectionalLight& lsrc)
 	{
-		m_lightSources.push_back(lsrc);
+		m_lightSources.directionalLights.push_back(lsrc);
 	}
 
 	void Scene::RenderScene()
 	{
-		for (GameObject* obj : m_objects)
+		for (GameObject& obj : m_objects)
 		{
 			if (m_mainCamera)
 			{
-				obj->Render(m_mainCamera, m_ambientIntensity, m_ambientColour);
+				obj.Render(m_mainCamera, &m_lightSources, m_ambientIntensity, m_ambientColour);
 			}			
 		}
 	}

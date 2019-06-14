@@ -41,12 +41,12 @@ namespace engine
 		class Shader
 		{
 			unsigned int m_rendererId;
-			std::string m_filePath;
+			std::vector<std::string>* m_shaderPaths;
 			std::unordered_map<std::string, int> m_uniformLocationCache;
 			ShaderProgramSource* m_source;
 
 		public:
-			Shader(const std::string& filepath);
+			Shader(std::vector<std::string> sourcePaths);
 			~Shader();
 			
 			void Bind() const;
@@ -59,12 +59,13 @@ namespace engine
 			void SetUniform1i(const std::string& name, int i1);
 			void SetUniform1f(const std::string& name, float v1);
 			void SetUniform3f(const std::string& name, float v0, float v1, float v2);
+			void SetUniformVec3(const std::string& name, glm::vec3 v0);
 			void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
 			void SetUniformMat4f(const std::string& name, const glm::mat4&);
 
 			void SetUniformArraySize(std::string name, unsigned int size);
 
-			static ShaderProgramSource* ParseShader(const std::string& filePath);
+			static ShaderProgramSource* ParseShader(std::vector<std::string>* sourcePaths);
 
 		private:
 			

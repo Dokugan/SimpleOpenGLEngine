@@ -4,11 +4,21 @@
 
 namespace engine {
 
+	class DirectionalLight;
+
+	struct LightSources
+	{
+		std::vector<DirectionalLight> directionalLights;
+		//TODO std::vector<SpotLight*> spotlights;
+		//TODO std::vector<PointLight*> pointLights;
+	};
+
 	class LightSource : public GameObject
 	{
-		glm::vec3 m_color;
-		float m_intensity;
 	public:
+		glm::vec3 m_diffuse;
+		glm::vec3 m_specular;
+
 		LightSource();
 		virtual ~LightSource();
 	};

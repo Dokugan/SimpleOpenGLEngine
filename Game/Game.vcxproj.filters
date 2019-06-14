@@ -25,7 +25,8 @@
   <ItemGroup>
     <None Include="res\shaders\BackgroundShader.glsl" />
     <None Include="res\shaders\Basic.glsl" />
-    <None Include="res\shaders\TextureShader.glsl" />
+    <None Include="res\shaders\TextureShader_vs.glsl" />
+    <None Include="res\shaders\TextureShader_fs.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ChildGameObject.h">
