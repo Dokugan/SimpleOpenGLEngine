@@ -2,8 +2,8 @@
 #version 420 core //? #version 420 core
 
 struct Material {
-	vec3 diffuse;
-	vec3 specular;
+	//vec3 diffuse;
+	//vec3 specular;
 	float shininess;
 };
 

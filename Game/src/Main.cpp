@@ -17,7 +17,7 @@ void Update(double dt)
 	// std::cout << x << ", " << y << '\n';
 	//std::cout << dt << '\n';
 	 window->GetDeltaMousePos(&x, &y);
-	std::cout << x << ", " << y << '\n';
+	//std::cout << x << ", " << y << '\n';
 	if (camera)
 	{
 		if (window->GetKeyStatus(KEY_SPACE))

@@ -238,8 +238,8 @@ namespace engine
 			m_shader->SetUniformVec3("u_DirectionalLights[" + std::to_string(i) + "].specular", l.m_specular);
 		}
 
-		m_shader->SetUniform3f("u_Material.diffuse", m_mtl.diffuse.x, m_mtl.diffuse.y, m_mtl.diffuse.z);
-		m_shader->SetUniform3f("u_Material.specular", m_mtl.specular.x, m_mtl.specular.y, m_mtl.specular.z);
+		//m_shader->SetUniform3f("u_Material.diffuse", m_mtl.diffuse.x, m_mtl.diffuse.y, m_mtl.diffuse.z);
+		//m_shader->SetUniform3f("u_Material.specular", m_mtl.specular.x, m_mtl.specular.y, m_mtl.specular.z);
 		m_shader->SetUniform1f("u_Material.shininess", m_mtl.shininess);
 		m_shader->SetUniformMat4f("u_Model", model);
 		m_shader->SetUniformMat4f("u_MVP", mvp);
