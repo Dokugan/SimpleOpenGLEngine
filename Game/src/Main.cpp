@@ -68,11 +68,11 @@ int main(int argc, char* argv[])
 	camera = CameraComponent::PerspectiveCamera(new TransformComponent(glm::vec3(.0f, 0.f, .0f)), 45.0f, static_cast<float>(width), static_cast<float>(height), 200.0f, 0.1f);
 	mainScene->SetCamera(camera);
 	GameObject obj = GameObject(new TransformComponent(glm::vec3(5.0f, 0.0f, 0.0f)));
-	auto mesh = new MeshComponent("res/models/texturedcube.obj");
+	auto mesh = new MeshComponent("res/models/baguette.obj");
 	obj.AddComponent(mesh);
 	mainScene->AddGameObject(obj);
 	mainScene->AddDirectionalLight(DirectionalLight(
-		glm::vec3(.5f, 1.f, 0.7f),
+		glm::vec3(.5f, -1.f, 0.7f),
 		glm::vec3(.6f, .6f, .6f),
 		glm::vec3(1.f, 1.f, 1.f)
 	));
