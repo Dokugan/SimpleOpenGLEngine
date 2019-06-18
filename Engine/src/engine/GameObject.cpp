@@ -17,6 +17,9 @@ namespace engine {
 	}
 
 	GameObject::~GameObject()
+		= default;
+
+	void GameObject::Delete()
 	{
 		for (auto c : m_components)
 			delete c;

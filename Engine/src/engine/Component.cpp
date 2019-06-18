@@ -10,6 +10,7 @@ namespace engine {
 	Component::~Component()
 	{
 	}
+
 	void Component::SetParent(GameObject* parent)
 	{
 		m_parent = parent;

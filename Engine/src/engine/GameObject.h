@@ -21,6 +21,8 @@ namespace engine {
 		GameObject(TransformComponent* transform);
 		virtual ~GameObject();
 
+		void Delete();
+
 		virtual void Update(double deltaTime){}
 
 		void AddComponent(Component* component);
@@ -38,7 +40,7 @@ namespace engine {
 					{
 						continue;
 					}
-					return *(&comp);
+					return comp;
 
 				}
 				catch (std::bad_cast bc)

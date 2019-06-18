@@ -35,12 +35,12 @@ namespace engine {
 
 	void Scene::AddGameObject(const GameObject& obj)
 	{
-		m_objects.push_back(obj);
+		m_objects.emplace_back(obj);
 	}
 
 	void Scene::AddDirectionalLight(const DirectionalLight& lsrc)
 	{
-		m_lightSources.directionalLights.push_back(lsrc);
+		m_lightSources.directionalLights.emplace_back(lsrc);
 	}
 
 	void Scene::RenderScene()

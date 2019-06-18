@@ -28,6 +28,7 @@ namespace engine {
 		m_inputAxisPositiveX = GetSetting("inputAxisPositiveX");
 		m_inputAxisNegativeY = GetSetting("inputAxisNegativeY");
 		m_inputAxisPositiveY = GetSetting("inputAxisPositiveY");
+
 		m_gameThread = std::thread(&GameWindow::SetupWindow, this);
 	}
 

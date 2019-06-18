@@ -5,6 +5,7 @@
 #include "../ext/glm/gtx/matrix_decompose.hpp"
 #include "../ext/glm/gtx/quaternion.hpp"
 #include "../ext/glm/gtx/rotate_vector.hpp"
+#include <iostream>
 
 
 namespace engine {
@@ -76,28 +77,68 @@ namespace engine {
 		return m_rotation;
 	}
 
+	glm::vec3 TransformComponent::Forward()
+	{
+		return glm::vec3(0);
+	}
+
 	void TransformComponent::Scale(glm::vec3 scale)
 	{
 		m_scale = scale;
-		//m_model_matrix = glm::scale(m_model_matrix, scale);
 	}
-
-	// void TransformComponent::Rotate(glm::quat rotation)
-	// {
-	// }
 
 	void TransformComponent::Rotate(glm::vec3 axis, float angle)
 	{
 		m_rotation = glm::rotate(m_rotation, angle, axis);
-		//m_model_matrix = glm::rotate(m_model_matrix, radians, axis);
 	}
 
-	void TransformComponent::RotateEuler(glm::vec3 rotation)
+	void TransformComponent::Rotate(float yaw, float pitch, float roll)
 	{
-		glm::vec3 euler = glm::eulerAngles(m_rotation);
-		euler -= rotation;
-		glm::quat quat = glm::quat(euler);
-		m_rotation = quat;
+		float rYaw, rPitch, rRoll;
+		glm::quat q1 = m_rotation;
+		float sqw = q1.w * q1.w;
+		float sqx = q1.x * q1.x;
+		float sqy = q1.y * q1.y;
+		float sqz = q1.z * q1.z;
+		float unit = sqx + sqy + sqz + sqw;
+		float test = q1.x * q1.y + q1.z * q1.w;
+		if (test > 0.4999 * unit) { // singularity at north pole
+			rYaw = 2 * atan2(q1.x, q1.w);
+			rPitch = PI / 2;
+			rRoll = 0;
+		}
+		if (test < -0.4999 * unit) { // singularity at south pole
+			rYaw = -2 * atan2(q1.x, q1.w);
+			rPitch = -PI / 2;
+			rRoll = 0;
+		}
+		else {
+			rYaw = atan2(2 * q1.y * q1.w - 2 * q1.x * q1.z, sqx - sqy - sqz + sqw);
+			rPitch = asin(2 * test / unit);
+			rRoll = atan2(2 * q1.x * q1.w - 2 * q1.y * q1.z, -sqx + sqy - sqz + sqw);
+		}
+
+		rYaw -= yaw;
+		if (rPitch - pitch < PI / 2 && rPitch - pitch > -PI / 2)
+		{
+			rPitch -= pitch;
+		}
+		std::cout << rPitch << '\n';
+		rRoll -= roll;
+
+		float c1 = cos(rYaw / 2);
+		float s1 = sin(rYaw / 2);
+		float c2 = cos(rPitch / 2);
+		float s2 = sin(rPitch / 2);
+		float c3 = cos(rRoll / 2);
+		float s3 = sin(rRoll / 2);
+		float c1c2 = c1 * c2;
+		float s1s2 = s1 * s2;
+		glm::quat q = glm::quat();
+		m_rotation.w = c1c2 * c3 - s1s2 * s3;
+		m_rotation.x = c1c2 * s3 + s1s2 * c3;
+		m_rotation.y = s1 * c2 * c3 + c1 * s2 * s3;
+		m_rotation.z = c1 * s2 * c3 - s1 * c2 * s3;
 	}
 
 	void TransformComponent::Translate(glm::vec3 movement)

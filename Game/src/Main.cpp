@@ -10,6 +10,8 @@
 engine::GameWindow* window;
 engine::CameraComponent* camera;
 
+glm::vec3 rot;
+
 void Update(double dt)
 {
 	 double x, y;
@@ -44,7 +46,20 @@ void Update(double dt)
 		{
 			camera->GetTransform()->Translate(glm::vec3(-1, 0, 0) * static_cast<float>(dt));
 		}
-		camera->GetTransform()->RotateEuler(glm::vec3(0, x*.5 * dt, y*.5 * dt));
+		camera->GetTransform()->Rotate( 0.1f * x * dt, 0.1f * y * dt,   0.0 );
+		//glm::quat rotation = glm::quat(-x * .1 * dt, glm::vec3(0, 1, 0)) * glm::quat(-y * .1 * dt, glm::vec3(0, 0, 1));
+		//camera->GetTransform()->Rotate(glm::vec3(0,1,0), -x * .1 * dt);
+		//camera->GetTransform()->Rotate(glm::vec3(0, 0, 1), -y * .1 * dt);
+		//camera->GetTransform()->Rotate(rotation);
+
+		//glm::vec3 r = glm::vec3(0, x * dt, y * dt);
+		//glm::vec3 newRot = glm::eulerAngles(camera->GetTransform()->GetRotation());
+
+		//if (newRot != rot)
+		//{
+		//	std::cout << "{" << r.x << ", " << r.y << ", " << r.z << "} \n";
+		//	rot = newRot;
+		//}
 	}
 }
 
@@ -65,12 +80,38 @@ int main(int argc, char* argv[])
 		Sleep(1);
 	}
 	window->GetWindowSize(&width, &height);
-	camera = CameraComponent::PerspectiveCamera(new TransformComponent(glm::vec3(.0f, 0.f, .0f)), 45.0f, static_cast<float>(width), static_cast<float>(height), 200.0f, 0.1f);
+	camera = CameraComponent::PerspectiveCamera(new TransformComponent(glm::vec3(.0f, 0.f, .0f)), 70.0f, static_cast<float>(width), static_cast<float>(height), 200.0f, 0.1f);
 	mainScene->SetCamera(camera);
-	GameObject obj = GameObject(new TransformComponent(glm::vec3(5.0f, 0.0f, 0.0f)));
+	GameObject obj = GameObject(new TransformComponent(glm::vec3(2.0f, 0.0f, 0.0f)));
 	auto mesh = new MeshComponent("res/models/baguette.obj");
 	obj.AddComponent(mesh);
+
+	GameObject obj2 = GameObject(new TransformComponent(glm::vec3(0.0f, 2.0f, 0.0f)));
+	auto mesh2 = new MeshComponent("res/models/baguette.obj");
+	obj2.AddComponent(mesh2);
+
+	GameObject obj3 = GameObject(new TransformComponent(glm::vec3(-2.0f, 0.0f, 0.0f)));
+	auto mesh3 = new MeshComponent("res/models/baguette.obj");
+	obj3.AddComponent(mesh3);
+
+	GameObject obj4 = GameObject(new TransformComponent(glm::vec3(0.0f, -2.0f, 0.0f)));
+	auto mesh4 = new MeshComponent("res/models/baguette.obj");
+	obj4.AddComponent(mesh4);
+
+	GameObject obj5 = GameObject(new TransformComponent(glm::vec3(0.0f, 0.0f, 2.0f)));
+	auto mesh5 = new MeshComponent("res/models/baguette.obj");
+	obj5.AddComponent(mesh5);
+
+	GameObject obj6 = GameObject(new TransformComponent(glm::vec3(0.0f, 0.0f, -2.0f)));
+	auto mesh6 = new MeshComponent("res/models/baguette.obj");
+	obj6.AddComponent(mesh6);
+
 	mainScene->AddGameObject(obj);
+	mainScene->AddGameObject(obj2);
+	mainScene->AddGameObject(obj4);
+	mainScene->AddGameObject(obj5);
+	mainScene->AddGameObject(obj6);
+
 	mainScene->AddDirectionalLight(DirectionalLight(
 		glm::vec3(.5f, -1.f, 0.7f),
 		glm::vec3(.6f, .6f, .6f),

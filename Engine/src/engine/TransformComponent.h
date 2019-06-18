@@ -2,6 +2,7 @@
 #include "Component.h"
 #include "../ext/glm/glm.hpp"
 #include "../ext/glm/gtc/quaternion.hpp"
+# define PI		3.14159265358979323846
 
 namespace engine {
 	glm::mat4 GetIdentityMatrix();
@@ -12,7 +13,6 @@ namespace engine {
 		glm::vec3 m_position;
 		glm::quat m_rotation;
 		glm::vec3 m_scale;
-		//glm::mat4 m_model_matrix;
 
 	public:
 		TransformComponent();
@@ -23,8 +23,10 @@ namespace engine {
 		glm::vec3 GetPosition() const;
 		glm::quat GetRotation() const;
 
+		glm::vec3 Forward();
+
 		void Rotate(glm::vec3 axis, float radians);
-		void RotateEuler(glm::vec3 rotation);
+		void Rotate(float yaw, float pitch, float roll);
 		//void Rotate(glm::quat rotation);
 		void Scale(glm::vec3 scale);
 		void Translate(glm::vec3 movement);
