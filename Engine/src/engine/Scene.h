@@ -14,7 +14,7 @@ namespace engine {
 	{
 		std::string m_id;
 		CameraComponent* m_mainCamera;
-		std::vector<GameObject> m_objects;
+		std::vector<GameObject*> m_objects;
 		LightSources m_lightSources;
 		float m_ambientIntensity;
 		glm::vec3 m_ambientColour;
@@ -27,9 +27,9 @@ namespace engine {
 		void  SetCamera(CameraComponent* camera);
 		CameraComponent* GetCamera() const;
 		const std::string& GetId() const;
-		void AddGameObject(const GameObject& obj);
+		void AddGameObject(GameObject* obj);
 		void AddDirectionalLight(const DirectionalLight& lsrc);
-		std::vector<GameObject>* GetObjects();
+		std::vector<GameObject*>* GetObjects();
 
 		void RenderScene();
 		void Update(double deltaTime);

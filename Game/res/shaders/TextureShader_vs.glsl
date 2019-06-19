@@ -17,7 +17,7 @@ void main()
 	FragPos = vec3(u_Model * vec4(position, 1.0));
 
 	UV = vertexUV;
-	Normal = normal;
+	Normal = mat3(transpose(inverse(u_Model))) * normal;
 
 	gl_Position = u_MVP * vec4(position, 1.0);
 };

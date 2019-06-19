@@ -23,7 +23,7 @@ namespace engine {
 		return m_mainCamera;
 	}
 
-	std::vector<GameObject>* Scene::GetObjects()
+	std::vector<GameObject*>* Scene::GetObjects()
 	{
 		return &m_objects;
 	}
@@ -33,7 +33,7 @@ namespace engine {
 		return m_id;
 	}
 
-	void Scene::AddGameObject(const GameObject& obj)
+	void Scene::AddGameObject(GameObject* obj)
 	{
 		m_objects.emplace_back(obj);
 	}
@@ -45,20 +45,20 @@ namespace engine {
 
 	void Scene::RenderScene()
 	{
-		for (GameObject& obj : m_objects)
+		for (GameObject* obj : m_objects)
 		{
 			if (m_mainCamera)
 			{
-				obj.Render(m_mainCamera, &m_lightSources, m_ambientIntensity, m_ambientColour);
+				obj->Render(m_mainCamera, &m_lightSources, m_ambientIntensity, m_ambientColour);
 			}			
 		}
 	}
 
 	void Scene::Update(double deltaTime)
 	{
-		for(GameObject& obj : m_objects)
+		for(GameObject* obj : m_objects)
 		{
-			obj.Update(deltaTime);
+			obj->Update(deltaTime);
 		}
 	}
 }

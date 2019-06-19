@@ -47,7 +47,7 @@ void Update(double dt)
 			camera->GetTransform()->Translate(-camera->GetTransform()->Forward() * static_cast<float>(dt));
 		}
 
-		camera->GetTransform()->Rotate( 0.1f * x * dt, 0.1f * y * dt,   0.0 );
+		camera->GetTransform()->Rotate( 0.2f * x * dt, 0.2f * y * dt,   0.0 );
 	}
 }
 
@@ -71,33 +71,33 @@ int main(int argc, char* argv[])
 	camera = CameraComponent::PerspectiveCamera(new TransformComponent(glm::vec3(.0f, 0.f, .0f)), 70.0f, static_cast<float>(width), static_cast<float>(height), 200.0f, 0.1f);
 	mainScene->SetCamera(camera);
 
-	GameObject obj = GameObject(new TransformComponent(glm::vec3(2.0f, 0.0f, 0.0f)));
+	GameObject* obj = new GameObject(new TransformComponent(glm::vec3(3.0f, 0.0f, 0.0f)));
 	auto mesh = new MeshComponent("res/models/baguette.obj");
-	obj.AddComponent(mesh);
+	obj->AddComponent(mesh);
 
-	GameObject obj2 = GameObject(new TransformComponent(glm::vec3(0.0f, 2.0f, 0.0f)));
+	GameObject* obj2 = new GameObject(new TransformComponent(glm::vec3(0.0f, 3.0f, 0.0f)));
 	auto mesh2 = new MeshComponent("res/models/baguette.obj");
-	obj2.AddComponent(mesh2);
+	obj2->AddComponent(mesh2);
 
-	GameObject obj3 = GameObject(new TransformComponent(glm::vec3(-2.0f, 0.0f, 0.0f)));
+	GameObject* obj3 = new GameObject(new TransformComponent(glm::vec3(-3.0f, 0.0f, 0.0f)));
 	auto mesh3 = new MeshComponent("res/models/baguette.obj");
-	obj3.AddComponent(mesh3);
+	obj3->AddComponent(mesh3);
 
-	GameObject obj4 = GameObject(new TransformComponent(glm::vec3(0.0f, -2.0f, 0.0f)));
+	GameObject* obj4 = new GameObject(new TransformComponent(glm::vec3(0.0f, -3.0f, 0.0f)));
 	auto mesh4 = new MeshComponent("res/models/baguette.obj");
-	obj4.AddComponent(mesh4);
+	obj4->AddComponent(mesh4);
 
-	GameObject obj5 = GameObject(new TransformComponent(glm::vec3(0.0f, 0.0f, 2.0f)));
+	ChildGameObject* obj5 = new ChildGameObject(new TransformComponent(glm::vec3(0.0f, 0.0f, 3.0f)));
 	auto mesh5 = new MeshComponent("res/models/baguette.obj");
-	obj5.AddComponent(mesh5);
+	obj5->AddComponent(mesh5);
 
-	GameObject obj6 = GameObject(new TransformComponent(glm::vec3(0.0f, 0.0f, -2.0f)));
-	auto mesh6 = new MeshComponent("res/models/baguette.obj");
-	obj6.AddComponent(mesh6);
-
+	ChildGameObject* obj6 = new ChildGameObject(new TransformComponent(glm::vec3(0.0f, 0.0f, -3.0f)));
+	auto mesh6 = new MeshComponent("res/models/texturedcube.obj");
+	obj6->AddComponent(mesh6);
 
 	mainScene->AddGameObject(obj);
 	mainScene->AddGameObject(obj2);
+	mainScene->AddGameObject(obj3);
 	mainScene->AddGameObject(obj4);
 	mainScene->AddGameObject(obj5);
 	mainScene->AddGameObject(obj6);

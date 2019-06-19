@@ -26,6 +26,7 @@ namespace engine {
 		glm::vec3 Forward() const;
 		glm::vec3 Right() const;
 		glm::vec3 Up() const;
+		glm::vec3 RelativeVec(glm::vec3 v) const;
 
 		void Rotate(glm::vec3 axis, float radians);
 		void Rotate(float yaw, float pitch, float roll);
