@@ -21,12 +21,12 @@ namespace engine {
 	TransformComponent::TransformComponent()
 	{
 		//m_model_matrix = GetIdentityMatrix();
-		m_rotation = glm::quat(1,0,0,0);
+		m_rotation = glm::quat(1, 0, 0, 0);
 		m_position = glm::vec3(0, 0, 0);
 		m_scale = glm::vec3(1, 1, 1);
 	}
 
-	TransformComponent::TransformComponent(glm::vec3 position)		
+	TransformComponent::TransformComponent(glm::vec3 position)
 	{
 		m_position = position;
 		m_rotation = glm::quat(1, 0, 0, 0);
@@ -102,27 +102,40 @@ namespace engine {
 		float sqz = q1.z * q1.z;
 		float unit = sqx + sqy + sqz + sqw;
 		float test = q1.x * q1.y + q1.z * q1.w;
-		if (test > 0.4999 * unit) { // singularity at north pole
+		if (test > 0.49999 * unit) { // singularity at north pole
 			rYaw = 2 * atan2(q1.x, q1.w);
-			rPitch = PI / 2;
+			rPitch = 1.5706f;// PI / 2 - ~0.0001
+			if (pitch > 0)
+				rPitch -= pitch;
 			rRoll = 0;
 		}
-		if (test < -0.4999 * unit) { // singularity at south pole
+		else if (test < -0.49999 * unit) { // singularity at south pole
 			rYaw = -2 * atan2(q1.x, q1.w);
-			rPitch = -PI / 2;
+			rPitch = -1.5708f; // -PI / 2 + ~0.0001
+			if (pitch < 0)
+				rPitch -= pitch;
 			rRoll = 0;
 		}
 		else {
 			rYaw = atan2(2 * q1.y * q1.w - 2 * q1.x * q1.z, sqx - sqy - sqz + sqw);
-			rPitch = asin(2 * test / unit);
+			rPitch = asin(2 * test / unit) - pitch;
+			if (rPitch > 1.5706f)
+				rPitch = 1.5706f;
+			else if (rPitch < -1.5708f)
+				rPitch = -1.5708f;
 			rRoll = atan2(2 * q1.x * q1.w - 2 * q1.y * q1.z, -sqx + sqy - sqz + sqw);
 		}
 
 		rYaw -= yaw;
-		if (rPitch - pitch < PI / 2 && rPitch - pitch > -PI / 2)
-		{
-			rPitch -= pitch;
-		}
+
+		//if (rPitch - pitch < 1.57079f && rPitch - pitch > -1.57079f)
+		//{
+		//	rPitch -= pitch;
+		//}
+		//else
+		//{
+		//	
+		//}
 		//std::cout << rPitch << '\n';
 		rRoll -= roll;
 
