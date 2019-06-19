@@ -32,6 +32,7 @@ namespace engine {
 		std::vector<GameObject>* GetObjects();
 
 		void RenderScene();
+		void Update(double deltaTime);
 	};
 
 }

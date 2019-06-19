@@ -1,13 +1,18 @@
 #include "GameObject.h"
-#include "MeshComponent.h"
-#include "TransformComponent.h"
+#include "components/MeshComponent.h"
+#include "components/TransformComponent.h"
 #include "Scene.h"
 
 namespace engine {
 	GameObject::GameObject()
 	{
-		const auto transform = new TransformComponent();
-		m_components.push_back(transform);
+		m_components.push_back(new TransformComponent());
+	}
+
+	GameObject::GameObject(const GameObject& o)
+	{
+		for (auto c : o.m_components)
+			m_components.push_back(c);
 	}
 
 	GameObject::GameObject(TransformComponent* transform)
@@ -18,12 +23,6 @@ namespace engine {
 
 	GameObject::~GameObject()
 		= default;
-
-	void GameObject::Delete()
-	{
-		for (auto c : m_components)
-			delete c;
-	}
 
 	void GameObject::AddComponent(Component* component)
 	{

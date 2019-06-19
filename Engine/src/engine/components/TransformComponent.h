@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
-#include "../ext/glm/glm.hpp"
-#include "../ext/glm/gtc/quaternion.hpp"
+#include "../../ext/glm/glm.hpp"
+#include "../../ext/glm/gtc/quaternion.hpp"
 # define PI		3.14159265358979323846
 
 namespace engine {

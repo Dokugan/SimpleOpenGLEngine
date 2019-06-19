@@ -1,8 +1,8 @@
 #include "CameraComponent.h"
-#include "GameObject.h"
-#include "../ext/glm/gtc/matrix_transform.hpp"
-#include "../ext/glm/gtx/quaternion.hpp"
-#include "../ext/glm/gtx/matrix_decompose.hpp"
+#include "../GameObject.h"
+#include "../../ext/glm/gtc/matrix_transform.hpp"
+#include "../../ext/glm/gtx/quaternion.hpp"
+#include "../../ext/glm/gtx/matrix_decompose.hpp"
 
 namespace engine
 {

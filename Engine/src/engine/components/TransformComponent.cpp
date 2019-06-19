@@ -1,10 +1,10 @@
 #include "TransformComponent.h"
-#include "../ext/glm/glm.hpp"
-#include "../ext/glm/gtx/transform.hpp"
-#include "../ext/glm/gtc/quaternion.hpp"
-#include "../ext/glm/gtx/matrix_decompose.hpp"
-#include "../ext/glm/gtx/quaternion.hpp"
-#include "../ext/glm/gtx/rotate_vector.hpp"
+#include "../../ext/glm/glm.hpp"
+#include "../../ext/glm/gtx/transform.hpp"
+#include "../../ext/glm/gtc/quaternion.hpp"
+#include "../../ext/glm/gtx/matrix_decompose.hpp"
+#include "../../ext/glm/gtx/quaternion.hpp"
+#include "../../ext/glm/gtx/rotate_vector.hpp"
 #include <iostream>
 
 
@@ -123,7 +123,7 @@ namespace engine {
 		{
 			rPitch -= pitch;
 		}
-		std::cout << rPitch << '\n';
+		//std::cout << rPitch << '\n';
 		rRoll -= roll;
 
 		float c1 = cos(rYaw / 2);

@@ -2,17 +2,12 @@
 #include "Component.h"
 #include <string>
 #include <vector>
-#include "../ext/glm/glm.hpp"
-#include "LightSource.h"
+#include "../../ext/glm/glm.hpp"
+#include "../LightSource.h"
+#include "../../gl/Texture.h"
 
 namespace engine {
-
-	namespace gl
-	{
-		class Texture;
-		class Shader;
-	}
-
+	
 	struct Material
 	{
 		std::string diffuse_texture;
@@ -34,13 +29,14 @@ namespace engine {
 		unsigned int m_indicesCount = 0;
 		gl::Texture* m_texture = nullptr;
 		gl::Shader* m_shader = nullptr;
-		
+		bool m_isInit = false;
+
 		Material m_mtl;
 
-	private:
 		//bool loadModelInMemory(const std::string& filePath, int* rCount, float* rVertices, int* rIndex);
-		void loadModel(const std::string& path, const std::string& mtlbasedir);
-
+		void LoadModel(const std::string& path, const std::string& mtlbasedir);
+		void InitTexture();
+		void InitShader();
 	public:
 		MeshComponent();
 		MeshComponent(const std::string& modelFilePath, const std::vector<std::string> shaderPaths = std::vector<std::string>());

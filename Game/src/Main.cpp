@@ -1,10 +1,10 @@
 #include "engine/GameWindow.h"
-#include "engine/MeshComponent.h"
+#include "engine/components/MeshComponent.h"
 #include <windows.h>
 #include <iostream>
 #include "ChildGameObject.h"
 #include "engine/Input.h"
-#include "engine/CameraComponent.h"
+#include "engine/components/CameraComponent.h"
 #include "engine/DirectionalLight.h"
 
 engine::GameWindow* window;
@@ -82,6 +82,7 @@ int main(int argc, char* argv[])
 	window->GetWindowSize(&width, &height);
 	camera = CameraComponent::PerspectiveCamera(new TransformComponent(glm::vec3(.0f, 0.f, .0f)), 70.0f, static_cast<float>(width), static_cast<float>(height), 200.0f, 0.1f);
 	mainScene->SetCamera(camera);
+
 	GameObject obj = GameObject(new TransformComponent(glm::vec3(2.0f, 0.0f, 0.0f)));
 	auto mesh = new MeshComponent("res/models/baguette.obj");
 	obj.AddComponent(mesh);
@@ -105,6 +106,7 @@ int main(int argc, char* argv[])
 	GameObject obj6 = GameObject(new TransformComponent(glm::vec3(0.0f, 0.0f, -2.0f)));
 	auto mesh6 = new MeshComponent("res/models/baguette.obj");
 	obj6.AddComponent(mesh6);
+
 
 	mainScene->AddGameObject(obj);
 	mainScene->AddGameObject(obj2);

@@ -18,11 +18,10 @@ namespace engine {
 
 	public:
 		GameObject();
+		GameObject(const GameObject&);
 		GameObject(TransformComponent* transform);
 		virtual ~GameObject();
-
-		void Delete();
-
+		
 		virtual void Update(double deltaTime){}
 
 		void AddComponent(Component* component);
@@ -34,7 +33,7 @@ namespace engine {
 			{
 				try
 				{
-					Component* c = m_components[i];
+				 	auto c = m_components[i];
 					T* comp = dynamic_cast<T*>(c);
 					if (comp == nullptr)
 					{

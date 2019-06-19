@@ -5,11 +5,12 @@ namespace engine {
 		class Texture
 		{
 			unsigned int m_rendererId;
-			std::string m_filePath;
 			unsigned char* m_localBuffer;
 			int m_width, m_height, m_BPP;
 		public:
-			Texture(const std::string& path);
+			std::string m_filePath;
+
+			Texture(const std::string& path = "");
 			~Texture();
 
 			void Bind(unsigned int slot = 0) const;

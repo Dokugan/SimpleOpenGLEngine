@@ -10,6 +10,7 @@ namespace engine {
 
 	public:
 		Component();
+		Component(const Component&);
 		virtual ~Component();
 
 		void SetParent(GameObject* parent);

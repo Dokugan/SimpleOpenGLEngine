@@ -6,17 +6,17 @@
 #endif 
 
 //#include <GLFW/glfw3.h>
-#include "../gl/Renderer.h"
-#include "../gl/VertexBufferLayout.h"
+#include "../../gl/Renderer.h"
+#include "../../gl/VertexBufferLayout.h"
 
-#include "../ext/tiny_obj_loader.h"
-#include "../ext/glm/gtx/transform.hpp"
-#include "../gl/Texture.h"
-#include "LightSource.h"
+#include "../../ext/tiny_obj_loader.h"
+#include "../../ext/glm/gtx/transform.hpp"
+#include "../../gl/Texture.h"
+#include "../LightSource.h"
 #include "CameraComponent.h"
 #include "TransformComponent.h"
-#include "GameObject.h"
-#include "DirectionalLight.h"
+#include "../GameObject.h"
+#include "../DirectionalLight.h"
 
 namespace engine
 {
@@ -29,7 +29,8 @@ namespace engine
 		auto absoluteModelPath = std::experimental::filesystem::absolute(modelFilePath);
 		std::cout << "loading model: " << absoluteModelPath << std::endl;
 		//m_model = loadModelInMemory(absoluteModelPath.string(), absoluteModelPath.parent_path().string());
-		loadModel(absoluteModelPath.string(), absoluteModelPath.parent_path().string());
+		LoadModel(absoluteModelPath.string(), absoluteModelPath.parent_path().string());
+		
 		if (shaderPaths.empty())
 		{
 			if (!m_mtl.diffuse_texture.empty())
@@ -47,13 +48,9 @@ namespace engine
 	}
 
 	MeshComponent::~MeshComponent()
-	{
-		delete(m_texture);
-		delete(m_vertices);
-		delete(m_indices);
-	}
+		= default;
 
-	void MeshComponent::loadModel(const std::string& path, const std::string& basedir)
+	void MeshComponent::LoadModel(const std::string& path, const std::string& basedir)
 	{
 		tinyobj::attrib_t attrib;
 		std::vector<tinyobj::shape_t> shapes;
@@ -183,8 +180,30 @@ namespace engine
 		}
 	}
 
+	void MeshComponent::InitTexture()
+	{
+		if (!m_texture)
+		{
+			m_texture = new gl::Texture(m_mtl.diffuse_texture);
+			//TODO more textures per model
+		}
+	}
+
+	void MeshComponent::InitShader()
+	{
+		m_shader->CreateShader();
+	}
+
 	void MeshComponent::Render(const CameraComponent* camera, LightSources* lights, float ambientIntensity, glm::vec3 ambientColour)
 	{
+		//initialization has to happen on openGL context thread
+		if (!m_isInit)
+		{
+			InitShader();
+			InitTexture();
+			m_isInit = true;
+		}
+
 		//Calculate Model view and projection matrices
 		glm::mat4 model = m_parent->GetComponent<TransformComponent>()->GetModelMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(camera->GetFov()), camera->GetWidth() / camera->GetHeight(),
@@ -198,31 +217,14 @@ namespace engine
 		gl::VertexBufferLayout layout = gl::VertexBufferLayout();
 		layout.Push<float>(3);
 
-		if (!m_texture)
-		{
-			if (!m_mtl.diffuse_texture.empty())
-			{
-				m_texture = new gl::Texture(m_mtl.diffuse_texture);
-				//TODO more textures per model
-			}
-		}
-
 		if (!m_mtl.diffuse_texture.empty())
 		{
 			m_shader->SetUniformArraySize("u_DirectionalLights", lights->directionalLights.size());
+			m_shader->SetUniform1i("u_TextureSampler", 0);
 		}
-		//m_shader->SetUniformArraySize("u_DirectionalLights", 0);
-		m_shader->CreateShader();
-		if (!m_shader)
+		else
 		{
-			if (!m_mtl.diffuse_texture.empty())
-			{
-				m_shader->SetUniform1i("u_TextureSampler", 0);
-			}
-			else
-			{
-				m_shader->SetUniform4f("u_Color", 1.0f, 0.0f, 0.0f, 1.0f);
-			}
+			m_shader->SetUniform4f("u_Color", 1.0f, 0.0f, 0.0f, 1.0f);
 		}
 
 		m_shader->SetUniform3f("u_ViewPos", camera->GetTransform()->GetPosition().x,
@@ -248,7 +250,7 @@ namespace engine
 
 		
 
-		if (m_texture)
+		if (!m_texture->m_filePath.empty())
 		{
 			//texture coords
 			layout.Push<float>(2);
@@ -256,6 +258,7 @@ namespace engine
 			layout.Push<float>(3);
 			gl::VertexArray va = gl::VertexArray();
 			va.AddBuffer(vb, layout);
+			m_shader->Bind();
 			m_texture->Bind();
 			gl::Renderer r = gl::Renderer();
 			r.Draw(va, ib, *m_shader);

@@ -29,8 +29,8 @@ namespace engine
 
 			void SetVertexSource(const std::string& source);
 			void SetFragmentSource(const std::string& source);
-			std::string GetVertexSource() const;
-			std::string GetFragmentSource() const;
+			std::string& GetVertexSource();
+			std::string& GetFragmentSource();
 			void AddUniformArray(UniformArray array);
 			UniformArray* GetUniformArray(const std::string& name);
 			std::vector<UniformArray> GetUniformArrayListVertex();
@@ -41,12 +41,12 @@ namespace engine
 		class Shader
 		{
 			unsigned int m_rendererId;
-			std::vector<std::string>* m_shaderPaths;
+			std::vector<std::string> m_shaderPaths;
 			std::unordered_map<std::string, int> m_uniformLocationCache;
-			ShaderProgramSource* m_source;
+			ShaderProgramSource m_source;
 
 		public:
-			Shader(std::vector<std::string> sourcePaths);
+			Shader(std::vector<std::string> sourcePaths = std::vector<std::string>());
 			~Shader();
 			
 			void Bind() const;
@@ -65,7 +65,7 @@ namespace engine
 
 			void SetUniformArraySize(std::string name, unsigned int size);
 
-			static ShaderProgramSource* ParseShader(std::vector<std::string>* sourcePaths);
+			static ShaderProgramSource ParseShader(std::vector<std::string>* sourcePaths);
 
 		private:
 			

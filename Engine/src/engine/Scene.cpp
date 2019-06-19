@@ -53,4 +53,12 @@ namespace engine {
 			}			
 		}
 	}
+
+	void Scene::Update(double deltaTime)
+	{
+		for(GameObject& obj : m_objects)
+		{
+			obj.Update(deltaTime);
+		}
+	}
 }

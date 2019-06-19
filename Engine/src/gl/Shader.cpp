@@ -30,11 +30,11 @@ namespace engine
 			m_fragmentSource = source;
 		}
 
-		std::string ShaderProgramSource::GetVertexSource() const {
+		std::string& ShaderProgramSource::GetVertexSource() {
 			return m_vertexSource;
 		}
 
-		std::string ShaderProgramSource::GetFragmentSource() const {
+		std::string& ShaderProgramSource::GetFragmentSource() {
 			return m_fragmentSource;
 		}
 
@@ -88,16 +88,16 @@ namespace engine
 		Shader::Shader(std::vector<std::string> sourcePaths)
 			: m_rendererId(0)
 		{
-			m_shaderPaths = new std::vector<std::string>(std::move(sourcePaths));
-			m_source = ParseShader(m_shaderPaths);
-			//m_rendererId = CreateShader(source.GetVertexSource(), source.GetFragmentSource());
+			if (!sourcePaths.empty())
+			{
+				m_shaderPaths = std::vector<std::string>(std::move(sourcePaths));
+				m_source = ParseShader(&m_shaderPaths);
+			}
 		}
 
 		Shader::~Shader()
 		{
 			GlCall(glDeleteProgram(m_rendererId));
-			delete m_shaderPaths;
-			delete m_source;
 		}
 
 		void Shader::Bind() const
@@ -148,7 +148,7 @@ namespace engine
 
 		void Shader::SetUniformArraySize(std::string name, unsigned size)
 		{
-			UniformArray* uArray = m_source->GetUniformArray(name);
+			UniformArray* uArray = m_source.GetUniformArray(name);
 			if (uArray->size != size)
 			{
 				uArray->size = size;
@@ -167,9 +167,9 @@ namespace engine
 			return location;
 		}
 
-		ShaderProgramSource* Shader::ParseShader(std::vector<std::string>* sourcePaths)
+		ShaderProgramSource Shader::ParseShader(std::vector<std::string>* sourcePaths)
 		{
-			ShaderProgramSource* result = new ShaderProgramSource();
+			ShaderProgramSource result = ShaderProgramSource();
 			std::stringstream ss[2];
 
 			enum class ShaderType
@@ -216,15 +216,15 @@ namespace engine
 								shaderType = GL_VERTEX_SHADER;
 							if (type == ShaderType::FRAGMENT)
 								shaderType = GL_FRAGMENT_SHADER;
-							result->AddUniformArray({ name, dataType, lineNum, shaderType, size });
+							result.AddUniformArray({ name, dataType, lineNum, shaderType, size });
 						}
 					}
 					lineNum++;
 				}
 			}
 
-			result->SetVertexSource(ss[0].str());
-			result->SetFragmentSource(ss[1].str());
+			result.SetVertexSource(ss[0].str());
+			result.SetFragmentSource(ss[1].str());
 			return result;
 		}
 
@@ -235,13 +235,13 @@ namespace engine
 			std::string source;
 			if (type == GL_VERTEX_SHADER)
 			{
-				source = m_source->GetVertexSource();
-				list = m_source->GetUniformArrayListVertex();
+				source = m_source.GetVertexSource();
+				list = m_source.GetUniformArrayListVertex();
 			}
 			else if (type == GL_FRAGMENT_SHADER)
 			{
-				source = m_source->GetFragmentSource();
-				list = m_source->GetUniformArrayListFragment();
+				source = m_source.GetFragmentSource();
+				list = m_source.GetUniformArrayListFragment();
 			}
 			else { list = std::vector<UniformArray>(); }
 			std::stringstream stream(source);
@@ -266,17 +266,14 @@ namespace engine
 						lineNum++;
 					}
 				}
+				source = newSource;
 			}
-			else
-			{
-				newSource = source;
-			}
-			
+
 			GlCall(unsigned int id = glCreateShader(type));
-			const char* src = newSource.c_str();
+			const char* src = source.c_str();
 			GlCall(glShaderSource(id, 1, &src, nullptr));
 			GlCall(glCompileShader(id));
-
+			
 			int result;
 			GlCall(glGetShaderiv(id, GL_COMPILE_STATUS, &result));
 			if (result == GL_FALSE)
@@ -297,12 +294,12 @@ namespace engine
 
 		ShaderProgramSource* Shader::GetSource()
 		{
-			return m_source;
+			return &m_source;
 		}
 
 		void Shader::CreateShader()
 		{
-
+			GlCall(glDeleteProgram(m_rendererId));
 			GlCall(auto program = glCreateProgram());
 			unsigned int vs = CompileShader(GL_VERTEX_SHADER);
 			unsigned int fs = CompileShader(GL_FRAGMENT_SHADER);
