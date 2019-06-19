@@ -77,9 +77,24 @@ namespace engine {
 		return m_rotation;
 	}
 
-	glm::vec3 TransformComponent::Forward()
+	glm::vec3 TransformComponent::Forward() const
 	{
-		return glm::vec3(0);
+		return glm::rotate(m_rotation, glm::vec3(1,0,0));
+	}
+
+	glm::vec3 TransformComponent::Right() const
+	{
+		return glm::rotate(m_rotation, glm::vec3(0, 0, 1));
+	}
+
+	glm::vec3 TransformComponent::Up() const
+	{
+		return glm::rotate(m_rotation, glm::vec3(0, 1, 0));
+	}
+
+	glm::vec3 TransformComponent::RelativeVec(glm::vec3 v) const
+	{
+		return glm::rotate(m_rotation, v);
 	}
 
 	void TransformComponent::Scale(glm::vec3 scale)
@@ -94,6 +109,7 @@ namespace engine {
 
 	void TransformComponent::Rotate(float yaw, float pitch, float roll)
 	{
+		// convert quaternion to euler
 		float rYaw, rPitch, rRoll;
 		glm::quat q1 = m_rotation;
 		float sqw = q1.w * q1.w;
@@ -126,19 +142,11 @@ namespace engine {
 			rRoll = atan2(2 * q1.x * q1.w - 2 * q1.y * q1.z, -sqx + sqy - sqz + sqw);
 		}
 
+		// apply rotation
 		rYaw -= yaw;
-
-		//if (rPitch - pitch < 1.57079f && rPitch - pitch > -1.57079f)
-		//{
-		//	rPitch -= pitch;
-		//}
-		//else
-		//{
-		//	
-		//}
-		//std::cout << rPitch << '\n';
 		rRoll -= roll;
 
+		// convert euler to quaternion
 		float c1 = cos(rYaw / 2);
 		float s1 = sin(rYaw / 2);
 		float c2 = cos(rPitch / 2);

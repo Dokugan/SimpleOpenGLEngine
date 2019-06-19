@@ -32,34 +32,22 @@ void Update(double dt)
 		}
 		if (window->GetKeyStatus(KEY_D))
 		{
-			camera->GetTransform()->Translate(glm::vec3(0, 0, 1) * static_cast<float>(dt));
+			camera->GetTransform()->Translate(camera->GetTransform()->Right() * static_cast<float>(dt));
 		}
 		if (window->GetKeyStatus(KEY_A))
 		{
-			camera->GetTransform()->Translate(glm::vec3(0, 0, -1) * static_cast<float>(dt));
+			camera->GetTransform()->Translate(-camera->GetTransform()->Right() * static_cast<float>(dt));
 		}
 		if (window->GetKeyStatus(KEY_W))
 		{
-			camera->GetTransform()->Translate(glm::vec3(1, 0, 0) * static_cast<float>(dt));
+			camera->GetTransform()->Translate(camera->GetTransform()->Forward() * static_cast<float>(dt));
 		}
 		if (window->GetKeyStatus(KEY_S))
 		{
-			camera->GetTransform()->Translate(glm::vec3(-1, 0, 0) * static_cast<float>(dt));
+			camera->GetTransform()->Translate(-camera->GetTransform()->Forward() * static_cast<float>(dt));
 		}
+
 		camera->GetTransform()->Rotate( 0.1f * x * dt, 0.1f * y * dt,   0.0 );
-		//glm::quat rotation = glm::quat(-x * .1 * dt, glm::vec3(0, 1, 0)) * glm::quat(-y * .1 * dt, glm::vec3(0, 0, 1));
-		//camera->GetTransform()->Rotate(glm::vec3(0,1,0), -x * .1 * dt);
-		//camera->GetTransform()->Rotate(glm::vec3(0, 0, 1), -y * .1 * dt);
-		//camera->GetTransform()->Rotate(rotation);
-
-		//glm::vec3 r = glm::vec3(0, x * dt, y * dt);
-		//glm::vec3 newRot = glm::eulerAngles(camera->GetTransform()->GetRotation());
-
-		//if (newRot != rot)
-		//{
-		//	std::cout << "{" << r.x << ", " << r.y << ", " << r.z << "} \n";
-		//	rot = newRot;
-		//}
 	}
 }
 
