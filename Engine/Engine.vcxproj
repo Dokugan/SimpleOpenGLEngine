@@ -19,6 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\include\GLFW\glfw3.h" />
+    <ClInclude Include="src\include\GLFW\glfw3native.h" />
+    <ClInclude Include="src\include\GL\eglew.h" />
+    <ClInclude Include="src\include\GL\glew.h" />
+    <ClInclude Include="src\include\GL\glxew.h" />
+    <ClInclude Include="src\include\GL\wglew.h" />
     <ClInclude Include="src\engine\Config.h" />
     <ClInclude Include="src\engine\DirectionalLight.h" />
     <ClInclude Include="src\engine\Input.h" />
@@ -381,6 +387,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LibraryPath>$(SolutionDir)dll$(SolutionDir)lib</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>$(SolutionDir)dll$(SolutionDir)lib</LibraryPath>
@@ -410,7 +417,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions); GLM_ENABLE_EXPERIMENTAL</PreprocessorDefinitions>
     </ClCompile>
     <Lib>
