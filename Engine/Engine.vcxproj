@@ -216,6 +216,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\default.cfg" />
+    <None Include="res\shaders\BackgroundShader.glsl" />
+    <None Include="res\shaders\Basic.glsl" />
+    <None Include="res\shaders\TextureShader_fs.glsl" />
+    <None Include="res\shaders\TextureShader_vs.glsl" />
     <None Include="src\ext\glm\detail\func_common.inl" />
     <None Include="src\ext\glm\detail\func_common_simd.inl" />
     <None Include="src\ext\glm\detail\func_exponential.inl" />
@@ -388,6 +392,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LibraryPath>$(SolutionDir)dll$(SolutionDir)lib</LibraryPath>
     <IncludePath>$(IncludePath)</IncludePath>
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>$(SolutionDir)dll$(SolutionDir)lib</LibraryPath>
@@ -430,6 +436,9 @@
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
     </ProjectReference>
+    <PostBuildEvent>
+      <Command>xcopy /y /s "$(ProjectDir)res" "$(OutDir)res"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

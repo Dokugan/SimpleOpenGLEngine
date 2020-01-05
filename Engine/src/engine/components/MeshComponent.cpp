@@ -35,11 +35,13 @@ namespace engine
 		{
 			if (!m_mtl.diffuse_texture.empty())
 			{
-				m_shader = new gl::Shader(std::vector<std::string>({"res/shaders/TextureShader_fs.glsl", "res/shaders/TextureShader_vs.glsl" }));
+				auto absolute = std::experimental::filesystem::absolute("/res/shaders/TextureShader_fs.glsl");
+				std::cout << absolute;
+				m_shader = new gl::Shader(std::vector<std::string>({"G:/Documents/VS_Projects/SimpleGameEngine/x64/Debug/res/shaders/TextureShader_fs.glsl", "G:/Documents/VS_Projects/SimpleGameEngine/x64/Debug/res/shaders/TextureShader_vs.glsl" }));
 			}
 			else
 			{
-				m_shader = new gl::Shader(std::vector<std::string>({ "res/shaders/basic.glsl"}));
+				m_shader = new gl::Shader(std::vector<std::string>({ "/res/shaders/basic.glsl"}));
 			}
 		}
 		else {
